@@ -1,0 +1,7 @@
+# Robots.txt for Kolar & Chintamani Service Phonebook
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin.html
+
+Sitemap: https://phonebook-kolar-chintamani.netlify.app/sitemap.xml
