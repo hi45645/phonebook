@@ -212,6 +212,11 @@ ${jsonLd}
         <button type="button" data-category="Carpenters" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Carpenters</button>
         <button type="button" data-category="AC & Appliance Repair" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">AC &amp; Appliance Repair</button>
         <button type="button" data-category="Welding & Fabrication" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Welding &amp; Fabrication</button>
+        <button type="button" data-category="Core Cutting" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Core Cutting</button>
+        <button type="button" data-category="CCTV & Security" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">CCTV &amp; Security</button>
+        <button type="button" data-category="Water Tank & Borewell" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Water Tank &amp; Borewell</button>
+        <button type="button" data-category="Tiles & Masonry" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Tiles &amp; Masonry</button>
+        <button type="button" data-category="Pest Control" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Pest Control</button>
       </div>
     </section>
 
@@ -400,31 +405,70 @@ ${preRenderedCards}
 
           <div>
             <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5">Categories * <span class="font-normal normal-case text-slate-400">(Tap one or more)</span></span>
-            <div id="categoryCheckboxes" class="grid grid-cols-2 gap-2">
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+            <div id="categoryCheckboxes" class="grid grid-cols-2 gap-2 max-h-56 overflow-y-auto p-1.5 border border-slate-200 rounded-xl bg-slate-50/50">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="Plumbers" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>Plumbers</span>
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="Electricians" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>Electricians</span>
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="Painters" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>Painters</span>
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="Carpenters" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>Carpenters</span>
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="AC & Appliance Repair" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>AC &amp; Repair</span>
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
                 <input type="checkbox" value="Welding & Fabrication" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
                 <span>Welding</span>
               </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-semibold text-rose-700 select-none">
+                <input type="checkbox" value="Core Cutting" class="w-4 h-4 rounded text-rose-600 focus:ring-rose-500" />
+                <span>Core Cutting</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="CCTV & Security" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>CCTV &amp; Security</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Water Tank & Borewell" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Water Tank / Borewell</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Tiles & Masonry" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Tiles &amp; Masonry</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Pest Control" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Pest Control</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-indigo-300 bg-indigo-50/70 hover:bg-indigo-100 active:bg-indigo-100 cursor-pointer text-xs sm:text-sm font-bold text-indigo-700 select-none">
+                <input type="checkbox" id="cbOtherCategory" value="Other" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>+ Other (Custom)</span>
+              </label>
+            </div>
+
+            <!-- Custom Category Input (shown when 'Other' is checked) -->
+            <div id="otherCategoryWrapper" class="hidden mt-2 p-3 bg-indigo-50/80 border border-indigo-200 rounded-xl space-y-1">
+              <label for="inputCustomCategory" class="block text-xs font-bold text-indigo-900 uppercase tracking-wide">
+                Type Your Category / Trade Name *
+              </label>
+              <input
+                id="inputCustomCategory"
+                type="text"
+                maxlength="50"
+                placeholder="e.g., Glass Work, Solar Installation, False Ceiling, POP..."
+                class="w-full px-3 py-2 rounded-lg border border-indigo-300 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+              <p class="text-[11px] text-indigo-700">Type your specific service trade. It will be added to your listing.</p>
             </div>
           </div>
 
@@ -852,8 +896,18 @@ ${preRenderedCards}
           return 'bg-cyan-50 text-cyan-700 border-cyan-200';
         case 'Welding & Fabrication':
           return 'bg-slate-100 text-slate-700 border-slate-300';
+        case 'Core Cutting':
+          return 'bg-rose-50 text-rose-700 border-rose-200';
+        case 'CCTV & Security':
+          return 'bg-purple-50 text-purple-700 border-purple-200';
+        case 'Water Tank & Borewell':
+          return 'bg-blue-50 text-blue-700 border-blue-200';
+        case 'Tiles & Masonry':
+          return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+        case 'Pest Control':
+          return 'bg-lime-50 text-lime-700 border-lime-200';
         default:
-          return 'bg-slate-50 text-slate-700 border-slate-200';
+          return 'bg-violet-50 text-violet-700 border-violet-200';
       }
     }
 
@@ -931,6 +985,48 @@ ${preRenderedCards}
       favCountBadge.textContent = favorites.size;
     }
 
+    function syncCategoryPills() {
+      const container = document.getElementById('categoryPillsContainer');
+      if (!container) return;
+
+      const baseList = [
+        'All',
+        'Plumbers',
+        'Electricians',
+        'Painters',
+        'Carpenters',
+        'AC & Appliance Repair',
+        'Welding & Fabrication',
+        'Core Cutting',
+        'CCTV & Security',
+        'Water Tank & Borewell',
+        'Tiles & Masonry',
+        'Pest Control'
+      ];
+
+      const customCats = new Set();
+      getAllListings().forEach((item) => {
+        if (Array.isArray(item.categories)) {
+          item.categories.forEach((cat) => {
+            if (cat && !baseList.includes(cat)) {
+              customCats.add(cat);
+            }
+          });
+        }
+      });
+
+      const fullList = [...baseList, ...Array.from(customCats).sort()];
+
+      container.innerHTML = fullList.map((cat) => {
+        const label = cat === 'All' ? 'All Services' : cat;
+        const active = filterState.category === cat;
+        const cls = active
+          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50';
+        return '<button type="button" data-category="' + escapeHtml(cat) + '" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ' + cls + '">' + escapeHtml(label) + '</button>';
+      }).join('');
+    }
+
     function updateFilterButtonStyles() {
       cityButtons.forEach((btn) => {
         const active = btn.getAttribute('data-city') === filterState.city;
@@ -941,14 +1037,7 @@ ${preRenderedCards}
         }\`;
       });
 
-      categoryPills.forEach((pill) => {
-        const active = pill.getAttribute('data-category') === filterState.category;
-        pill.className = \`cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer \${
-          active
-            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
-        }\`;
-      });
+      syncCategoryPills();
 
       favToggleBtn.className = \`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-all cursor-pointer \${
         filterState.onlyFavorites
@@ -1226,12 +1315,16 @@ ${preRenderedCards}
       });
     });
 
-    categoryPills.forEach((pill) => {
-      pill.addEventListener('click', () => {
-        filterState.category = pill.getAttribute('data-category');
-        renderListings();
+    const categoryPillsContainer = document.getElementById('categoryPillsContainer');
+    if (categoryPillsContainer) {
+      categoryPillsContainer.addEventListener('click', (e) => {
+        const pill = e.target.closest('.cat-pill');
+        if (pill) {
+          filterState.category = pill.getAttribute('data-category');
+          renderListings();
+        }
       });
-    });
+    }
 
     favToggleBtn.addEventListener('click', () => {
       filterState.onlyFavorites = !filterState.onlyFavorites;
@@ -1319,9 +1412,14 @@ ${preRenderedCards}
       addContactForm.classList.remove('hidden');
       const successView = document.getElementById('modalSuccessView');
       if (successView) successView.classList.add('hidden');
+      const otherWrapper = document.getElementById('otherCategoryWrapper');
+      if (otherWrapper) otherWrapper.classList.add('hidden');
+      const inputCustom = document.getElementById('inputCustomCategory');
+      if (inputCustom) inputCustom.value = '';
+      const cbOther = document.getElementById('cbOtherCategory');
+      if (cbOther) cbOther.checked = false;
       addContactModal.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
-      // Only autofocus on desktop; avoids jumping viewport on mobile
       if (window.innerWidth >= 640) {
         const firstInput = document.getElementById('inputName');
         if (firstInput) firstInput.focus();
@@ -1333,6 +1431,12 @@ ${preRenderedCards}
       addContactModal.classList.add('hidden');
       document.body.classList.remove('overflow-hidden');
       addContactForm.reset();
+      const otherWrapper = document.getElementById('otherCategoryWrapper');
+      if (otherWrapper) otherWrapper.classList.add('hidden');
+      const inputCustom = document.getElementById('inputCustomCategory');
+      if (inputCustom) inputCustom.value = '';
+      const cbOther = document.getElementById('cbOtherCategory');
+      if (cbOther) cbOther.checked = false;
       const successView = document.getElementById('modalSuccessView');
       if (successView) successView.classList.add('hidden');
       addContactForm.classList.remove('hidden');
@@ -1345,6 +1449,21 @@ ${preRenderedCards}
     const closeSuccessBtn = document.getElementById('closeSuccessBtn');
     if (closeSuccessBtn) {
       closeSuccessBtn.addEventListener('click', closeModal);
+    }
+
+    const cbOtherCategory = document.getElementById('cbOtherCategory');
+    const otherCategoryWrapper = document.getElementById('otherCategoryWrapper');
+    const inputCustomCategory = document.getElementById('inputCustomCategory');
+    if (cbOtherCategory && otherCategoryWrapper) {
+      cbOtherCategory.addEventListener('change', () => {
+        if (cbOtherCategory.checked) {
+          otherCategoryWrapper.classList.remove('hidden');
+          if (inputCustomCategory) inputCustomCategory.focus();
+        } else {
+          otherCategoryWrapper.classList.add('hidden');
+          if (inputCustomCategory) inputCustomCategory.value = '';
+        }
+      });
     }
 
     // Prevent backdrop click dismiss on mobile touch scroll:
@@ -1384,9 +1503,24 @@ ${preRenderedCards}
 
       const name = document.getElementById('inputName').value.trim();
       const city = document.getElementById('inputCity').value;
-      const selectedCategories = Array.from(
+      let selectedCategories = Array.from(
         document.querySelectorAll('#categoryCheckboxes input[type="checkbox"]:checked')
-      ).map((cb) => cb.value);
+      ).map((cb) => cb.value).filter(val => val !== 'Other');
+
+      const cbOther = document.getElementById('cbOtherCategory');
+      const inputCustom = document.getElementById('inputCustomCategory');
+      if (cbOther && cbOther.checked) {
+        const customVal = inputCustom ? inputCustom.value.trim() : '';
+        if (!customVal) {
+          showModalError('Please type your custom category name in the "+ Other" field.');
+          if (inputCustom) inputCustom.focus();
+          return;
+        }
+        const formattedCustom = customVal.split(/\\s+/).filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+        if (!selectedCategories.includes(formattedCustom)) {
+          selectedCategories.push(formattedCustom.slice(0, 40));
+        }
+      }
       const phoneRaw = document.getElementById('inputPhone').value.trim();
       const altPhoneRaw = document.getElementById('inputAltPhone').value.trim();
       const hoursRaw = document.getElementById('inputHours').value.trim();
@@ -1784,6 +1918,11 @@ function buildAdminHtml() {
           <input id="editName" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
         </div>
 
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Categories (comma-separated)</label>
+          <input id="editCategories" type="text" required placeholder="e.g. Core Cutting, Plumbers" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+        </div>
+
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">City</label>
@@ -1909,6 +2048,7 @@ function buildAdminHtml() {
     const cancelAdminEditBtn = document.getElementById('cancelAdminEditBtn');
     const adminEditForm = document.getElementById('adminEditForm');
     const editName = document.getElementById('editName');
+    const editCategories = document.getElementById('editCategories');
     const editCity = document.getElementById('editCity');
     const editPhone = document.getElementById('editPhone');
     const editAltPhone = document.getElementById('editAltPhone');
@@ -2419,6 +2559,7 @@ function buildAdminHtml() {
     function openAdminEditModal(item) {
       editingItem = item;
       editName.value = item.name || '';
+      editCategories.value = Array.isArray(item.categories) ? item.categories.join(', ') : (item.categories || '');
       editCity.value = item.city || 'Kolar';
       editPhone.value = item.phone || '';
       editAltPhone.value = item.altPhone || '';
@@ -2441,8 +2582,14 @@ function buildAdminHtml() {
       e.preventDefault();
       if (!editingItem) return;
 
+      const cats = editCategories.value
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean);
+
       const payload = {
         name: editName.value.trim(),
+        categories: cats.length > 0 ? cats : ['General'],
         city: editCity.value,
         phone: editPhone.value.trim(),
         altPhone: editAltPhone.value.trim(),
@@ -2710,6 +2857,15 @@ function runBuild() {
       path: '/kolar/welding',
       priority: '0.8'
     },
+    {
+      city: 'Kolar',
+      trade: 'Core Cutting',
+      title: 'RCC Core Cutting in Kolar',
+      description: 'Find contact numbers, addresses, and WhatsApp links for professional RCC concrete core cutting and slab drilling specialists in Kolar, Karnataka.',
+      dir: 'kolar/core-cutting',
+      path: '/kolar/core-cutting',
+      priority: '0.8'
+    },
     // Chintamani Trades
     {
       city: 'Chintamani',
@@ -2754,6 +2910,15 @@ function runBuild() {
       description: 'Find contact numbers, addresses, and WhatsApp links for welding and fabrication workshops in Chintamani, Karnataka.',
       dir: 'chintamani/welding',
       path: '/chintamani/welding',
+      priority: '0.8'
+    },
+    {
+      city: 'Chintamani',
+      trade: 'Core Cutting',
+      title: 'RCC Core Cutting in Chintamani',
+      description: 'Find contact numbers, addresses, and WhatsApp links for professional RCC concrete core cutting and slab drilling specialists in Chintamani, Karnataka.',
+      dir: 'chintamani/core-cutting',
+      path: '/chintamani/core-cutting',
       priority: '0.8'
     }
   ];

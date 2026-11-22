@@ -49,6 +49,12 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://phonebook-kolar-chintamani.netlify.app/kolar/core-cutting</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://phonebook-kolar-chintamani.netlify.app/chintamani/electricians</loc>
     <lastmod>2026-11-22</lastmod>
     <changefreq>weekly</changefreq>
@@ -74,6 +80,12 @@
   </url>
   <url>
     <loc>https://phonebook-kolar-chintamani.netlify.app/chintamani/welding</loc>
+    <lastmod>2026-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://phonebook-kolar-chintamani.netlify.app/chintamani/core-cutting</loc>
     <lastmod>2026-11-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
