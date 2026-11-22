@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const ROOT = path.resolve(__dirname, '..');
 
 const MIME_TYPES = {
@@ -62,8 +62,8 @@ server.listen(PORT, () => {
   console.log('====================================================');
   console.log('  Kolar & Chintamani Service Phonebook - Local Server');
   console.log('====================================================');
-  console.log(\`  > Public Directory : http://localhost:\${PORT}/\`);
-  console.log(\`  > Admin Portal     : http://localhost:\${PORT}/admin\`);
+  console.log('  > Public Directory : http://localhost:' + PORT + '/');
+  console.log('  > Admin Portal     : http://localhost:' + PORT + '/admin');
   console.log('----------------------------------------------------');
   console.log('  Press Ctrl + C to stop the server');
   console.log('====================================================');
