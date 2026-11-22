@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Portal | Kolar &amp; Chintamani Phonebook</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col antialiased">
+
+  <!-- ==================== LOGIN VIEW ==================== -->
+  <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-slate-800/90 border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 w-full max-w-md backdrop-blur-md">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center shadow-md">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white">Phonebook Admin</h1>
+          <p class="text-xs text-slate-400">Sign in to review and manage listings</p>
+        </div>
+      </div>
+
+      <!-- Google Sign In Button -->
+      <button
+        id="googleLoginBtn"
+        type="button"
+        class="w-full flex items-center justify-center gap-3 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 active:scale-[0.99] text-slate-900 text-sm font-semibold transition-all shadow-md cursor-pointer mb-5"
+      >
+        <svg class="w-4 h-4" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+          <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+          <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+          <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+        </svg>
+        <span>Sign in with Google</span>
+      </button>
+
+      <div class="flex items-center gap-3 my-4 text-xs text-slate-500 uppercase tracking-wider">
+        <span class="flex-1 h-px bg-slate-700"></span>
+        <span>Or email &amp; password</span>
+        <span class="flex-1 h-px bg-slate-700"></span>
+      </div>
+
+      <!-- Email / Password Form -->
+      <form id="emailLoginForm" class="space-y-4">
+        <div>
+          <label for="adminEmail" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Admin Email</label>
+          <input
+            id="adminEmail"
+            type="email"
+            required
+            placeholder="admin@example.com"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+        <div>
+          <label for="adminPassword" class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Password</label>
+          <input
+            id="adminPassword"
+            type="password"
+            required
+            placeholder="••••••••"
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <button
+          id="emailLoginBtn"
+          type="submit"
+          class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.99] text-white text-sm font-semibold transition-all shadow-md cursor-pointer"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <div id="loginErrorMsg" class="hidden mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-300"></div>
+
+      <div class="mt-6 pt-4 border-t border-slate-700/60 text-center">
+        <a href="/" class="text-xs text-slate-400 hover:text-white transition-colors">&larr; Return to Public Directory</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== AUTHENTICATED DASHBOARD VIEW ==================== -->
+  <div id="dashboardView" class="hidden flex-1 flex flex-col">
+    <!-- Admin TopBar -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-30 shadow-md">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center shadow-sm shrink-0">
+            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0 1 12 2.944a11.955 11.955 0 0 1-8.618 3.04A12.02 12.02 0 0 0 3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-base font-bold text-white">Phonebook Admin Dashboard</h1>
+            <p id="adminUserBadge" class="text-xs text-slate-400">Signed in as: <span class="text-indigo-300 font-mono">admin</span></p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a
+            href="/"
+            target="_blank"
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-700/80 hover:bg-slate-700 text-xs text-slate-300 font-medium border border-slate-600 transition-colors"
+          >
+            <span>View Public Site</span>
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+          </a>
+
+          <button
+            id="logoutBtn"
+            type="button"
+            class="px-3 py-1.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-colors cursor-pointer"
+          >
+            Sign Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Admin Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+      <!-- Stats Bar -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Pending Reviews</p>
+          <p id="adminStatPending" class="text-2xl font-extrabold text-amber-400 mt-1">0</p>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Active Listings</p>
+          <p id="adminStatActive" class="text-2xl font-extrabold text-white mt-1">36</p>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Confirmed by Phone</p>
+          <p id="adminStatConfirmed" class="text-2xl font-extrabold text-emerald-400 mt-1">0</p>
+        </div>
+        <div class="bg-slate-800/80 border border-slate-700 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Deleted Defaults</p>
+          <p id="adminStatDeleted" class="text-2xl font-extrabold text-rose-400 mt-1">0</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-700 pb-2 overflow-x-auto">
+        <button
+          id="tabBtnPending"
+          type="button"
+          class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-indigo-600 text-white"
+        >
+          Pending Reviews (<span id="tabCountPending">0</span>)
+        </button>
+        <button
+          id="tabBtnActive"
+          type="button"
+          class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-slate-800 text-slate-400 hover:text-white"
+        >
+          All Active Listings (<span id="tabCountActive">36</span>)
+        </button>
+        <button
+          id="tabBtnTrash"
+          type="button"
+          class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-slate-800 text-slate-400 hover:text-white"
+        >
+          Trash &amp; Defaults (<span id="tabCountTrash">0</span>)
+        </button>
+        <button
+          id="tabBtnExport"
+          type="button"
+          class="admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-slate-800 text-slate-400 hover:text-white ml-auto"
+        >
+          Export CSV
+        </button>
+      </div>
+
+      <!-- TAB 1: PENDING REVIEWS -->
+      <section id="panelPending" class="space-y-4">
+        <div id="pendingList" class="space-y-4">
+          <!-- Pending items injected here -->
+        </div>
+      </section>
+
+      <!-- TAB 2: ACTIVE LISTINGS & MODERATION -->
+      <section id="panelActive" class="hidden space-y-4">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <input
+            id="adminSearchInput"
+            type="search"
+            placeholder="Search active listings..."
+            class="flex-1 px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+          <select id="adminCityFilter" class="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-sm text-white">
+            <option value="All">All Cities</option>
+            <option value="Kolar">Kolar</option>
+            <option value="Chintamani">Chintamani</option>
+          </select>
+        </div>
+
+        <div id="activeList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Active listings injected here -->
+        </div>
+      </section>
+
+      <!-- TAB 3: TRASH & DELETED DEFAULTS -->
+      <section id="panelTrash" class="hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-200">Deleted Base Listings</h2>
+          <button
+            id="adminRestoreAllBtn"
+            type="button"
+            class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-all cursor-pointer"
+          >
+            Restore All Defaults
+          </button>
+        </div>
+        <div id="trashList" class="space-y-3">
+          <!-- Deleted base listings -->
+        </div>
+      </section>
+
+      <!-- TAB 4: EXPORT TOOLS -->
+      <section id="panelExport" class="hidden bg-slate-800/80 border border-slate-700 rounded-2xl p-6 space-y-4 max-w-xl">
+        <h2 class="text-base font-bold text-white">Export Directory Data (Admin Only)</h2>
+        <p class="text-xs text-slate-400">Download formatted CSV reports of public directory contacts and pending review submissions.</p>
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <button
+            id="downloadActiveCsvBtn"
+            type="button"
+            class="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md transition-all cursor-pointer"
+          >
+            Export Active Listings CSV
+          </button>
+          <button
+            id="downloadPendingCsvBtn"
+            type="button"
+            class="flex-1 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition-all cursor-pointer"
+          >
+            Export Pending Reviews CSV
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== ADMIN EDIT CONTACT MODAL ==================== -->
+  <div
+    id="adminEditModal"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+  >
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-lg p-6 space-y-4 my-8">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-700">
+        <h3 id="adminEditModalTitle" class="text-base font-bold text-white">Edit Contact</h3>
+        <button id="closeAdminEditModalBtn" type="button" class="text-slate-400 hover:text-white p-1">&times;</button>
+      </div>
+
+      <form id="adminEditForm" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Business Name</label>
+          <input id="editName" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">City</label>
+            <select id="editCity" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white">
+              <option value="Kolar">Kolar</option>
+              <option value="Chintamani">Chintamani</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Primary Phone</label>
+            <input id="editPhone" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Alternate Phone</label>
+          <input id="editAltPhone" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Address</label>
+          <input id="editAddress" type="text" required class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Operating Hours</label>
+          <input id="editHours" type="text" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Description</label>
+          <textarea id="editDesc" rows="2" class="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-sm text-white resize-none"></textarea>
+        </div>
+
+        <!-- Confirmed by Phone Switch -->
+        <div class="flex items-center gap-2 p-3 rounded-xl bg-slate-900 border border-slate-700">
+          <input id="editVerified" type="checkbox" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+          <label for="editVerified" class="text-xs sm:text-sm font-semibold text-emerald-300 cursor-pointer">Mark as "Confirmed by phone"</label>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-700">
+          <button id="cancelAdminEditBtn" type="button" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:text-white">Cancel</button>
+          <button id="saveAdminEditBtn" type="submit" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="adminToastContainer" class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2 items-end"></div>
+
+  <!-- ==================== ADMIN SCRIPT ==================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      GoogleAuthProvider,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      updateDoc,
+      deleteDoc,
+      collection,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const DEFAULT_LISTINGS = [
+      {
+            "id": "kolar-plumb-1",
+            "name": "Mathaji Enterprises Kolar",
+            "city": "Kolar",
+            "categories": [
+                  "Plumbers"
+            ],
+            "phone": "090366 19344",
+            "address": "Tekal Rd, Kalavanchi, Petechamanahalli, Karnataka 563101",
+            "hours": "Mon–Tue 8:30 AM–8:00 PM; Wed–Sat 8:00 AM–8:00 PM; Sun Closed",
+            "desc": "Plumbing services and supplies in the Kalavanchi area of Kolar."
+      },
+      {
+            "id": "kolar-plumb-2",
+            "name": "Electrical And Plumbing cera enterprises",
+            "city": "Kolar",
+            "categories": [
+                  "Plumbers",
+                  "Electricians"
+            ],
+            "phone": "079750 67911",
+            "address": "6, Bhavani Talkies Road, Karanji Katte, Muneshwara Nagar, Kolar, Karnataka 563101",
+            "hours": "Call to confirm availability",
+            "desc": "Handles both plumbing and electrical work in Muneshwara Nagar."
+      },
+      {
+            "id": "kolar-elec-1",
+            "name": "Smart Service Electrician in Kolar",
+            "city": "Kolar",
+            "categories": [
+                  "Electricians"
+            ],
+            "phone": "082170 33123",
+            "address": "Mahatma Gandhi Rd, Kanakanapalya, Doddapet, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 9:00 AM–5:00 PM",
+            "desc": "Residential and commercial electrical repair services in Doddapet."
+      },
+      {
+            "id": "kolar-elec-2",
+            "name": "Sri Venkateswara electricals",
+            "city": "Kolar",
+            "categories": [
+                  "Electricians"
+            ],
+            "phone": "084318 51030",
+            "address": "Gowripete, Kolar, Karnataka 563101",
+            "hours": "Call to confirm availability",
+            "desc": "Local electrical service provider located in Gowripete."
+      },
+      {
+            "id": "kolar-elec-3",
+            "name": "Minhaj Electricals",
+            "city": "Kolar",
+            "categories": [
+                  "Electricians"
+            ],
+            "phone": "099808 57057",
+            "address": "Antharagange Main Rd, behind Mayuri Bakery, Muneshwara Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri 9:00 AM–12:30 PM, 3:30 PM–8:00 PM",
+            "desc": "Electrical repairs and installations along Antharagange Main Road."
+      },
+      {
+            "id": "kolar-paint-1",
+            "name": "ROYALPAINTERS",
+            "city": "Kolar",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "094825 45457",
+            "address": "44M8+CPQ, Keelu Kote, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:30 AM–6:30 PM; Fri Closed",
+            "desc": "Local painting contractor serving Keelu Kote and surrounding areas of Kolar."
+      },
+      {
+            "id": "kolar-paint-2",
+            "name": "Asian Paints Beautiful Homes Painting Service (Suresh Enterprises)",
+            "city": "Kolar",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "08071 682 590",
+            "address": "Suresh Enterprises, near R.T.O Office, Kanakanapalya, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 10:00 AM–9:30 PM",
+            "desc": "Professional interior and exterior painting near the RTO Office."
+      },
+      {
+            "id": "kolar-paint-3",
+            "name": "Asian Paints Colourideas - Praja Enterprises",
+            "city": "Kolar",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "08071 499 515",
+            "address": "Ground Floor, MB Rd, opposite Venkateshwara Theatre, Raja Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri Closed",
+            "desc": "Paint consultation, supplies, and painting services on MB Road."
+      },
+      {
+            "id": "kolar-paint-4",
+            "name": "Surya arts",
+            "city": "Kolar",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "090357 47596",
+            "address": "Kataripalya Main Road, near Bindhumalyam Kalyana Mantapa, Kolar, Karnataka 563101",
+            "hours": "Mon–Sat 9:00 AM–9:00 PM; Sun Closed",
+            "desc": "Painting and artistic wall work on Kataripalya Main Road."
+      },
+      {
+            "id": "kolar-paint-5",
+            "name": "Asian Paints Beautiful Homes Painting Service (Sri Kanta Gaargesh)",
+            "city": "Kolar",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "08071 682 993",
+            "address": "Sri Kanta Gaargesh Stores, Brahmin Street, New Bus Stand Road, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 10:00 AM–9:30 PM",
+            "desc": "Authorized painting service branch near New Bus Stand Road."
+      },
+      {
+            "id": "kolar-ac-1",
+            "name": "ASeZ Enterprises",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "085533 37089",
+            "address": "Kolar - Arahalli Rd, Rahmath Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–12:00 PM, 3:30 PM–7:00 PM",
+            "desc": "AC repair and servicing in Rahmath Nagar."
+      },
+      {
+            "id": "kolar-ac-2",
+            "name": "KK electronics",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "086607 72665",
+            "address": "Head Post Office Rd, Gowripete, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 10:00 AM–6:30 PM",
+            "desc": "AC and home appliance repairs on Head Post Office Road."
+      },
+      {
+            "id": "kolar-ac-3",
+            "name": "aalian tech solutions",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "089511 78895",
+            "address": "Head Post Office Rd, beside Mysore Bank, opposite Lateefa Banu Masjid, Gowripete, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri 3:00 PM–8:00 PM",
+            "desc": "Services air conditioners and household appliances in Gowripete."
+      },
+      {
+            "id": "kolar-ac-4",
+            "name": "Unique Solution",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "098800 68451",
+            "address": "1st Phase, 2nd Block, 791, KUDA Layout, Tamaka, Kolar, Karnataka 563103",
+            "hours": "Mon–Sat 9:00 AM–7:00 PM; Sun Closed",
+            "desc": "AC repair services in the Tamaka / KUDA Layout area."
+      },
+      {
+            "id": "kolar-ac-5",
+            "name": "LG Service Centre",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "090355 26190",
+            "address": "44QJ+QCP, MB Rd, Kumbarpet, Raja Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 10:00 AM–10:00 PM",
+            "desc": "Brand-specific AC and appliance service in Raja Nagar."
+      },
+      {
+            "id": "kolar-ac-6",
+            "name": "ORO HOME APPLIANCES SERVICE",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "080 6217 7668",
+            "address": "Kolar-Chikkaballapur Rd, opposite Khaja Eidgha, Sangondahalli, Kolar, Karnataka 563101",
+            "hours": "Mon–Sun 9:00 AM–10:00 PM",
+            "desc": "Repairs major household appliances along the Kolar–Chikkaballapur Road."
+      },
+      {
+            "id": "kolar-ac-7",
+            "name": "A R M Home appliances",
+            "city": "Kolar",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "080506 24099",
+            "address": "10th Cross, Bangalore Main Rd, near Bilal Masjid, Shaheensha Nagar, Kolar, Karnataka 563101",
+            "hours": "Call to confirm availability",
+            "desc": "Appliance repair services near Kolar Clock Tower."
+      },
+      {
+            "id": "kolar-weld-1",
+            "name": "KMD TINKER AND ENGINEERING WORKS",
+            "city": "Kolar",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "087929 45778",
+            "address": "Kolar Bypass Rd, near Pavan College Field, Kalavanchi, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 8:00 AM–8:00 PM; Fri 2:30 PM–8:00 PM",
+            "desc": "Welding, tinkering, and metalwork near Pavan College Field."
+      },
+      {
+            "id": "kolar-weld-2",
+            "name": "M Z Engineering warks",
+            "city": "Kolar",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "097407 94788",
+            "address": "Muneshwara Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun Open 24 hours; Fri Closed",
+            "desc": "Welding and engineering fabrication in Muneshwara Nagar."
+      },
+      {
+            "id": "kolar-weld-3",
+            "name": "FAMOUS ENGINEERING WARKS KOLAR",
+            "city": "Kolar",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "076767 68606",
+            "address": "CB Pure Main Road, Kolar - Arahalli Rd, Rahmath Nagar, Kolar, Karnataka 563101",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri Closed",
+            "desc": "Metal fabrication and welding work in Rahmath Nagar."
+      },
+      {
+            "id": "kolar-weld-4",
+            "name": "Shiva Engineering Works",
+            "city": "Kolar",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "091417 38373",
+            "address": "Kolar - Malur Rd, near APMC Yard, Vijayanagara, Ammerahalli, Karnataka 563101",
+            "hours": "Mon–Sat 9:00 AM–8:00 PM; Sun Closed",
+            "desc": "Welding and fabrication services near the APMC Yard."
+      },
+      {
+            "id": "kolar-weld-5",
+            "name": "Sri Maruthi Engineering Works",
+            "city": "Kolar",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "091089 12435",
+            "address": "Bangarpet Rd, Vinoba Nagar, Dodda Hassala, Karnataka 563101",
+            "hours": "Mon–Sun 9:00 AM–6:00 PM",
+            "desc": "Engineering and welding works on Bangarpet Road."
+      },
+      {
+            "id": "chint-elec-1",
+            "name": "Sakib electrician and plumber",
+            "city": "Chintamani",
+            "categories": [
+                  "Plumbers",
+                  "Electricians"
+            ],
+            "phone": "077601 03170",
+            "address": "5th Cross, Chowdareddy Palya, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 8:00 AM–6:00 PM",
+            "desc": "Provides both plumbing and electrical repair services in Chowdareddy Palya."
+      },
+      {
+            "id": "chint-elec-2",
+            "name": "Ziya Bharath Electrical Services",
+            "city": "Chintamani",
+            "categories": [
+                  "Electricians"
+            ],
+            "phone": "099643 56707",
+            "address": "Gajanana Circle, Ayubia Masjid Rd, Chintamani, Karnataka 563125",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–5:00 PM",
+            "desc": "Electrical repairs and appliance servicing near Gajanana Circle."
+      },
+      {
+            "id": "chint-elec-3",
+            "name": "Rahul Electricals Works",
+            "city": "Chintamani",
+            "categories": [
+                  "Electricians"
+            ],
+            "phone": "094834 43090",
+            "address": "Polytechnic Rd, opp. RK Hospital, KR Extension, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 7:00 AM–8:00 PM",
+            "desc": "Electrical services opposite RK Hospital in KR Extension."
+      },
+      {
+            "id": "chint-paint-1",
+            "name": "ANAND PAINT HOUSE",
+            "city": "Chintamani",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "081474 70600",
+            "address": "Near KSRTC Bus Stand, Chelur Road, Chintamani, Karnataka 563125",
+            "hours": "Mon–Tue, Thu–Sun 8:30 AM–7:30 PM; Wed 8:30 AM–3:00 PM",
+            "desc": "Supplies paints and connects customers with painting solutions near the KSRTC Bus Stand."
+      },
+      {
+            "id": "chint-paint-2",
+            "name": "Birla Opus Paint Gallery - K S Subbarayappa Hardware",
+            "city": "Chintamani",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "08071 875 952",
+            "address": "MG Rd, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 8:30 AM–8:00 PM",
+            "desc": "Paint products and painting guidance on MG Road."
+      },
+      {
+            "id": "chint-paint-3",
+            "name": "Asian Paint Painting Service's",
+            "city": "Chintamani",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "1800 266 2090",
+            "address": "MG Rd, Chintamani, Munthakadirenahalli, Karnataka 563125",
+            "hours": "Call to schedule",
+            "desc": "Home painting bookings in Chintamani."
+      },
+      {
+            "id": "chint-paint-4",
+            "name": "Asian Paints Colour Cube - Vinayaka Hardware Stores",
+            "city": "Chintamani",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "080 4594 9916",
+            "address": "Ground Floor, opposite KS Subbarayappa Glass & Plywood, Tippu Nagar, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 10:00 AM–9:30 PM",
+            "desc": "Paint supplies and color consultation in Tippu Nagar."
+      },
+      {
+            "id": "chint-paint-5",
+            "name": "Asian Paints Beautiful Homes Painting Service",
+            "city": "Chintamani",
+            "categories": [
+                  "Painters"
+            ],
+            "phone": "081474 70600",
+            "address": "Ground Floor, Chelur Rd, near KSRTC Bus Stand Road, Keerthi Nagar, Chintamani, Karnataka 563125",
+            "hours": "Mon–Tue, Thu–Sun 10:00 AM–7:00 PM; Wed 10:00 AM–2:00 PM",
+            "desc": "Turnkey painting services in Keerthi Nagar."
+      },
+      {
+            "id": "chint-carp-1",
+            "name": "ARA interior works",
+            "city": "Chintamani",
+            "categories": [
+                  "Carpenters"
+            ],
+            "phone": "078924 44955",
+            "address": "Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun (Call to confirm hours)",
+            "desc": "Carpentry, woodwork, and interior installations in Chintamani."
+      },
+      {
+            "id": "chint-ac-1",
+            "name": "Girias Chintamani",
+            "city": "Chintamani",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "090362 89552",
+            "address": "Bangalore Rd, near RTO, Prabhakar Layout, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 10:30 AM–9:00 PM",
+            "desc": "Major home appliance store and service support point near the RTO."
+      },
+      {
+            "id": "chint-ac-2",
+            "name": "Lakshmi Electronics",
+            "city": "Chintamani",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "098860 81127",
+            "address": "Shop No. 41, Stadium Complex, Bangalore Rd, Chintamani, Karnataka 563125",
+            "hours": "Call to confirm availability",
+            "desc": "Electronics and appliance repairs at Stadium Complex."
+      },
+      {
+            "id": "chint-ac-3",
+            "name": "SKBS Enterprises",
+            "city": "Chintamani",
+            "categories": [
+                  "AC & Appliance Repair"
+            ],
+            "phone": "074838 44429",
+            "address": "Hoskote - Chintamani Rd, Ashwini Layout, Chintamani, Karnataka 563125",
+            "hours": "Mon–Sun 9:00 AM–8:00 PM",
+            "desc": "Appliance servicing in Ashwini Layout."
+      },
+      {
+            "id": "chint-weld-1",
+            "name": "RDR engineering and fabrication works",
+            "city": "Chintamani",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "099167 31153",
+            "address": "C347+QQJ, near Kisan Factory, Chintamani, Karnataka 563125",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–7:00 PM; Fri Closed",
+            "desc": "Metal fabrication and welding services near Kisan Factory."
+      },
+      {
+            "id": "chint-weld-2",
+            "name": "S S Auto Works SyedFirozPasha",
+            "city": "Chintamani",
+            "categories": [
+                  "Welding & Fabrication"
+            ],
+            "phone": "090367 91314",
+            "address": "Sidlaghatta Road, Chintamani, Karnataka 563125",
+            "hours": "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–4:00 PM",
+            "desc": "Metalwork and auto repair along Sidlaghatta Road."
+      }
+];
+    const DEFAULT_ID_SET = new Set(DEFAULT_LISTINGS.map(item => item.id));
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0slPHF3q-eGa-0lkrF4M0OrTVp716QPk",
+      authDomain: "phonebook-fbf5f.firebaseapp.com",
+      projectId: "phonebook-fbf5f",
+      storageBucket: "phonebook-fbf5f.firebasestorage.app",
+      messagingSenderId: "799496474816",
+      appId: "1:799496474816:web:367b6787f479c1160e5d25"
+    };
+    const appId = "kolar-chintamani-phonebook";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    let currentAdminUser = null;
+    let rawCommunityContacts = [];
+    let baseOverrides = {};
+    let editingItem = null;
+
+    // DOM Elements
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    const emailLoginForm = document.getElementById('emailLoginForm');
+    const adminEmailInput = document.getElementById('adminEmail');
+    const adminPasswordInput = document.getElementById('adminPassword');
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const adminUserBadge = document.getElementById('adminUserBadge');
+
+    const adminStatPending = document.getElementById('adminStatPending');
+    const adminStatActive = document.getElementById('adminStatActive');
+    const adminStatConfirmed = document.getElementById('adminStatConfirmed');
+    const adminStatDeleted = document.getElementById('adminStatDeleted');
+
+    const tabBtnPending = document.getElementById('tabBtnPending');
+    const tabBtnActive = document.getElementById('tabBtnActive');
+    const tabBtnTrash = document.getElementById('tabBtnTrash');
+    const tabBtnExport = document.getElementById('tabBtnExport');
+    const tabCountPending = document.getElementById('tabCountPending');
+    const tabCountActive = document.getElementById('tabCountActive');
+    const tabCountTrash = document.getElementById('tabCountTrash');
+
+    const panelPending = document.getElementById('panelPending');
+    const panelActive = document.getElementById('panelActive');
+    const panelTrash = document.getElementById('panelTrash');
+    const panelExport = document.getElementById('panelExport');
+
+    const pendingList = document.getElementById('pendingList');
+    const activeList = document.getElementById('activeList');
+    const trashList = document.getElementById('trashList');
+    const adminSearchInput = document.getElementById('adminSearchInput');
+    const adminCityFilter = document.getElementById('adminCityFilter');
+    const adminRestoreAllBtn = document.getElementById('adminRestoreAllBtn');
+
+    const adminEditModal = document.getElementById('adminEditModal');
+    const closeAdminEditModalBtn = document.getElementById('closeAdminEditModalBtn');
+    const cancelAdminEditBtn = document.getElementById('cancelAdminEditBtn');
+    const adminEditForm = document.getElementById('adminEditForm');
+    const editName = document.getElementById('editName');
+    const editCity = document.getElementById('editCity');
+    const editPhone = document.getElementById('editPhone');
+    const editAltPhone = document.getElementById('editAltPhone');
+    const editAddress = document.getElementById('editAddress');
+    const editHours = document.getElementById('editHours');
+    const editDesc = document.getElementById('editDesc');
+    const editVerified = document.getElementById('editVerified');
+
+    const downloadActiveCsvBtn = document.getElementById('downloadActiveCsvBtn');
+    const downloadPendingCsvBtn = document.getElementById('downloadPendingCsvBtn');
+    const adminToastContainer = document.getElementById('adminToastContainer');
+
+    function showAdminToast(msg, type = 'success') {
+      const toast = document.createElement('div');
+      const bg = type === 'error' ? 'bg-rose-600' : 'bg-indigo-600';
+      toast.className = `pointer-events-auto ${bg} text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-lg border border-white/10 transition-all duration-300 translate-y-2 opacity-0`;
+      toast.textContent = msg;
+      adminToastContainer.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // 1. AUTHENTICATION LISTENER
+    onAuthStateChanged(auth, (user) => {
+      // Must be non-anonymous to access admin panel
+      if (user && !user.isAnonymous) {
+        currentAdminUser = user;
+        loginView.classList.add('hidden');
+        dashboardView.classList.remove('hidden');
+        adminUserBadge.innerHTML = `Signed in as: <span class="text-indigo-300 font-mono font-semibold">${user.email || user.displayName || user.uid}</span>`;
+        initAdminData();
+      } else {
+        currentAdminUser = null;
+        dashboardView.classList.add('hidden');
+        loginView.classList.remove('hidden');
+      }
+    });
+
+    // Google Sign-In
+    googleLoginBtn.addEventListener('click', async () => {
+      loginErrorMsg.classList.add('hidden');
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithPopup(auth, provider);
+        showAdminToast('Welcome to Admin Portal');
+      } catch (err) {
+        console.error('Google sign-in error:', err);
+        loginErrorMsg.textContent = err.message || 'Failed to sign in with Google';
+        loginErrorMsg.classList.remove('hidden');
+      }
+    });
+
+    // Email & Password Sign-In
+    emailLoginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginErrorMsg.classList.add('hidden');
+      const email = adminEmailInput.value.trim();
+      const password = adminPasswordInput.value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        showAdminToast('Signed in successfully');
+      } catch (err) {
+        console.error('Email sign-in error:', err);
+        loginErrorMsg.textContent = err.message || 'Invalid email or password';
+        loginErrorMsg.classList.remove('hidden');
+      }
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', async () => {
+      await signOut(auth);
+      showAdminToast('Signed out');
+    });
+
+    // 2. DATA SUBSCRIPTIONS
+    function initAdminData() {
+      // Listen to all contacts in public collection
+      onSnapshot(
+        collection(db, 'artifacts', appId, 'public', 'data', 'contacts'),
+        (snapshot) => {
+          const list = [];
+          snapshot.forEach((docSnap) => {
+            list.push({ id: docSnap.id, ...docSnap.data() });
+          });
+          list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          rawCommunityContacts = list;
+          renderAdminViews();
+        },
+        (err) => console.error('Admin contacts error:', err)
+      );
+
+      // Listen to base overrides
+      onSnapshot(
+        collection(db, 'artifacts', appId, 'public', 'data', 'base_overrides'),
+        (snapshot) => {
+          const overrides = {};
+          snapshot.forEach((docSnap) => {
+            overrides[docSnap.id] = docSnap.data();
+          });
+          baseOverrides = overrides;
+          renderAdminViews();
+        },
+        (err) => console.error('Admin overrides error:', err)
+      );
+    }
+
+    // 3. MERGE & CALCULATE LISTS
+    function getMergedActiveListings() {
+      const activeDefaults = DEFAULT_LISTINGS.reduce((acc, base) => {
+        const ovr = baseOverrides[base.id];
+        if (ovr && ovr.deleted) return acc;
+        if (ovr) {
+          acc.push({
+            ...base,
+            name: ovr.name || base.name,
+            city: ovr.city || base.city,
+            categories: Array.isArray(ovr.categories) && ovr.categories.length > 0 ? ovr.categories : base.categories,
+            phone: ovr.phone || base.phone,
+            altPhone: ovr.altPhone || '',
+            address: ovr.address || base.address,
+            hours: ovr.hours || base.hours,
+            desc: ovr.desc !== undefined ? ovr.desc : base.desc,
+            verified: Boolean(ovr.verified !== undefined ? ovr.verified : base.verified),
+            isBase: true
+          });
+        } else {
+          acc.push({ ...base, altPhone: '', verified: Boolean(base.verified), isBase: true });
+        }
+        return acc;
+      }, []);
+
+      const approvedCommunity = rawCommunityContacts.filter((c) => c.status === 'approved').map((c) => ({
+        ...c,
+        isCommunity: true
+      }));
+
+      return [...approvedCommunity, ...activeDefaults];
+    }
+
+    function getPendingSubmissions() {
+      return rawCommunityContacts.filter((c) => c.status === 'pending');
+    }
+
+    function getDeletedBaseListings() {
+      return DEFAULT_LISTINGS.filter((base) => baseOverrides[base.id] && baseOverrides[base.id].deleted);
+    }
+
+    // 4. RENDER ADMIN VIEWS
+    function renderAdminViews() {
+      const pending = getPendingSubmissions();
+      const active = getMergedActiveListings();
+      const deleted = getDeletedBaseListings();
+      const confirmedCount = active.filter((i) => i.verified).length;
+
+      // Update counters
+      adminStatPending.textContent = pending.length;
+      adminStatActive.textContent = active.length;
+      adminStatConfirmed.textContent = confirmedCount;
+      adminStatDeleted.textContent = deleted.length;
+
+      tabCountPending.textContent = pending.length;
+      tabCountActive.textContent = active.length;
+      tabCountTrash.textContent = deleted.length;
+
+      // Render Pending Tab
+      renderPendingTab(pending);
+
+      // Render Active Tab
+      renderActiveTab(active);
+
+      // Render Trash Tab
+      renderTrashTab(deleted);
+    }
+
+    function renderPendingTab(pending) {
+      if (pending.length === 0) {
+        pendingList.innerHTML = `
+          <div class="bg-slate-800/80 border border-slate-700/80 rounded-2xl p-8 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center mx-auto mb-3">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 class="text-sm font-bold text-white">Pending Review Queue is Empty</h3>
+            <p class="text-xs text-slate-400 mt-1">All visitor submissions have been reviewed and processed.</p>
+          </div>
+        `;
+        return;
+      }
+
+      pendingList.innerHTML = pending.map((item) => {
+        const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleString() : 'Recent';
+        return `
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-700 pb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">Pending Review</span>
+                  <span class="text-xs text-slate-400">Submitted: ${dateStr}</span>
+                </div>
+                <h3 class="text-base font-bold text-white mt-1">${item.name}</h3>
+              </div>
+              <div class="text-xs font-mono text-indigo-300 bg-slate-900 px-2.5 py-1 rounded-lg">City: ${item.city}</div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-slate-300">
+              <p><span class="text-slate-500">Primary Phone:</span> <strong class="text-white">${item.phone}</strong></p>
+              ${item.altPhone ? `<p><span class="text-slate-500">Alt Phone:</span> ${item.altPhone}</p>` : ''}
+              <p><span class="text-slate-500">Categories:</span> ${(item.categories || []).join(', ')}</p>
+              <p><span class="text-slate-500">Address:</span> ${item.address}</p>
+              ${item.hours ? `<p><span class="text-slate-500">Hours:</span> ${item.hours}</p>` : ''}
+              ${item.desc ? `<p class="sm:col-span-2"><span class="text-slate-500">Notes:</span> ${item.desc}</p>` : ''}
+            </div>
+
+            <div class="flex flex-wrap items-center justify-end gap-2 pt-3 border-t border-slate-700">
+              <button
+                type="button"
+                data-reject-id="${item.id}"
+                class="reject-btn px-3 py-1.5 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 text-xs font-semibold border border-rose-500/30 transition-colors cursor-pointer"
+              >
+                Reject / Delete
+              </button>
+              <button
+                type="button"
+                data-edit-pending-id="${item.id}"
+                class="edit-pending-btn px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Edit Details
+              </button>
+              <button
+                type="button"
+                data-approve-id="${item.id}"
+                class="approve-btn px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Approve (Publish Live)
+              </button>
+              <button
+                type="button"
+                data-approve-confirmed-id="${item.id}"
+                class="approve-confirmed-btn px-4 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Approve &amp; Mark Confirmed
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderActiveTab(active) {
+      const search = adminSearchInput.value.trim().toLowerCase();
+      const city = adminCityFilter.value;
+
+      const filtered = active.filter((i) => {
+        if (city !== 'All' && i.city !== city) return false;
+        if (!search) return true;
+        return (
+          i.name.toLowerCase().includes(search) ||
+          i.phone.toLowerCase().includes(search) ||
+          i.address.toLowerCase().includes(search) ||
+          i.categories.some((c) => c.toLowerCase().includes(search))
+        );
+      });
+
+      if (filtered.length === 0) {
+        activeList.innerHTML = `<p class="text-xs text-slate-400 col-span-2 text-center py-8">No matching active contacts.</p>`;
+        return;
+      }
+
+      activeList.innerHTML = filtered.map((item) => {
+        return `
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-4 flex flex-col justify-between space-y-3">
+            <div>
+              <div class="flex items-start justify-between gap-2 mb-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-900 text-slate-300 border border-slate-700">${item.city}</span>
+                  ${item.verified ? `<span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Confirmed by phone</span>` : ''}
+                </div>
+                <label class="inline-flex items-center gap-1.5 text-xs text-slate-400 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    data-toggle-verify="${item.id}"
+                    ${item.verified ? 'checked' : ''}
+                    class="rounded text-emerald-500 focus:ring-emerald-400"
+                  />
+                  <span>Confirmed</span>
+                </label>
+              </div>
+
+              <h4 class="text-sm font-bold text-white">${item.name}</h4>
+              <p class="text-xs text-slate-400 mt-0.5">${item.categories.join(' · ')}</p>
+              <p class="text-xs text-indigo-300 font-mono mt-1.5">${item.phone}${item.altPhone ? ' / ' + item.altPhone : ''}</p>
+              <p class="text-xs text-slate-400 mt-1 truncate">${item.address}</p>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-700">
+              <button
+                type="button"
+                data-edit-active-id="${item.id}"
+                class="edit-active-btn px-3 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium cursor-pointer"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                data-delete-active-id="${item.id}"
+                class="delete-active-btn px-3 py-1 rounded-lg bg-rose-600/20 hover:bg-rose-600/30 text-rose-300 text-xs font-medium border border-rose-500/30 cursor-pointer"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTrashTab(deleted) {
+      if (deleted.length === 0) {
+        trashList.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">No deleted base listings.</p>`;
+        adminRestoreAllBtn.disabled = true;
+        adminRestoreAllBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+      }
+
+      adminRestoreAllBtn.disabled = false;
+      adminRestoreAllBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      trashList.innerHTML = deleted.map((item) => {
+        return `
+          <div class="flex items-center justify-between p-3.5 rounded-xl bg-slate-800 border border-slate-700 gap-3">
+            <div>
+              <p class="text-sm font-bold text-white">${item.name}</p>
+              <p class="text-xs text-slate-400">${item.city} · ${item.phone}</p>
+            </div>
+            <button
+              type="button"
+              data-restore-base-id="${item.id}"
+              class="restore-base-btn px-3 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Restore
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Tab Switcher
+    function switchTab(tab) {
+      [tabBtnPending, tabBtnActive, tabBtnTrash, tabBtnExport].forEach(b => {
+        b.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-slate-800 text-slate-400 hover:text-white';
+      });
+      [panelPending, panelActive, panelTrash, panelExport].forEach(p => p.classList.add('hidden'));
+
+      if (tab === 'pending') {
+        tabBtnPending.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-indigo-600 text-white';
+        panelPending.classList.remove('hidden');
+      } else if (tab === 'active') {
+        tabBtnActive.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-indigo-600 text-white';
+        panelActive.classList.remove('hidden');
+      } else if (tab === 'trash') {
+        tabBtnTrash.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-indigo-600 text-white';
+        panelTrash.classList.remove('hidden');
+      } else if (tab === 'export') {
+        tabBtnExport.className = 'admin-tab-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer bg-indigo-600 text-white';
+        panelExport.classList.remove('hidden');
+      }
+    }
+
+    tabBtnPending.addEventListener('click', () => switchTab('pending'));
+    tabBtnActive.addEventListener('click', () => switchTab('active'));
+    tabBtnTrash.addEventListener('click', () => switchTab('trash'));
+    tabBtnExport.addEventListener('click', () => switchTab('export'));
+
+    adminSearchInput.addEventListener('input', () => renderActiveTab(getMergedActiveListings()));
+    adminCityFilter.addEventListener('change', () => renderActiveTab(getMergedActiveListings()));
+
+    // 5. ACTIONS: APPROVE / REJECT / TOGGLE VERIFIED / EDIT / DELETE
+    pendingList.addEventListener('click', async (e) => {
+      const approveBtn = e.target.closest('.approve-btn');
+      if (approveBtn) {
+        const id = approveBtn.getAttribute('data-approve-id');
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id), {
+          status: 'approved',
+          approvedAt: Date.now(),
+          approvedBy: currentAdminUser.email
+        });
+        showAdminToast('Listing approved and published live!');
+        return;
+      }
+
+      const approveConfBtn = e.target.closest('.approve-confirmed-btn');
+      if (approveConfBtn) {
+        const id = approveConfBtn.getAttribute('data-approve-confirmed-id');
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id), {
+          status: 'approved',
+          verified: true,
+          approvedAt: Date.now(),
+          approvedBy: currentAdminUser.email
+        });
+        showAdminToast('Approved with "Confirmed by phone" badge!');
+        return;
+      }
+
+      const rejectBtn = e.target.closest('.reject-btn');
+      if (rejectBtn) {
+        const id = rejectBtn.getAttribute('data-reject-id');
+        if (confirm('Permanently reject and delete this submission?')) {
+          await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id));
+          showAdminToast('Submission rejected and removed');
+        }
+        return;
+      }
+
+      const editBtn = e.target.closest('.edit-pending-btn');
+      if (editBtn) {
+        const id = editBtn.getAttribute('data-edit-pending-id');
+        const item = rawCommunityContacts.find((c) => c.id === id);
+        if (item) openAdminEditModal(item);
+      }
+    });
+
+    activeList.addEventListener('click', async (e) => {
+      const editBtn = e.target.closest('.edit-active-btn');
+      if (editBtn) {
+        const id = editBtn.getAttribute('data-edit-active-id');
+        const item = getMergedActiveListings().find((c) => c.id === id);
+        if (item) openAdminEditModal(item);
+        return;
+      }
+
+      const deleteBtn = e.target.closest('.delete-active-btn');
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute('data-delete-active-id');
+        const item = getMergedActiveListings().find((c) => c.id === id);
+        if (!item) return;
+
+        if (confirm(`Delete "${item.name}" from public directory?`)) {
+          if (DEFAULT_ID_SET.has(id)) {
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', id), {
+              deleted: true,
+              deletedAt: Date.now(),
+              deletedBy: currentAdminUser.email
+            }, { merge: true });
+          } else {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id));
+          }
+          showAdminToast(`Deleted "${item.name}"`);
+        }
+      }
+    });
+
+    activeList.addEventListener('change', async (e) => {
+      const toggle = e.target.closest('input[data-toggle-verify]');
+      if (toggle) {
+        const id = toggle.getAttribute('data-toggle-verify');
+        const isChecked = toggle.checked;
+        if (DEFAULT_ID_SET.has(id)) {
+          await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', id), {
+            verified: isChecked,
+            updatedAt: Date.now(),
+            updatedBy: currentAdminUser.email
+          }, { merge: true });
+        } else {
+          await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', id), {
+            verified: isChecked,
+            updatedAt: Date.now(),
+            updatedBy: currentAdminUser.email
+          });
+        }
+        showAdminToast(isChecked ? 'Marked Confirmed by Phone' : 'Removed Confirmed badge');
+      }
+    });
+
+    trashList.addEventListener('click', async (e) => {
+      const restoreBtn = e.target.closest('.restore-base-btn');
+      if (restoreBtn) {
+        const id = restoreBtn.getAttribute('data-restore-base-id');
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', id), {
+          deleted: false,
+          restoredAt: Date.now(),
+          restoredBy: currentAdminUser.email
+        }, { merge: true });
+        showAdminToast('Restored listing to directory');
+      }
+    });
+
+    adminRestoreAllBtn.addEventListener('click', async () => {
+      const deleted = getDeletedBaseListings();
+      if (deleted.length === 0) return;
+      await Promise.all(
+        deleted.map((item) =>
+          setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', item.id), {
+            deleted: false,
+            restoredAt: Date.now(),
+            restoredBy: currentAdminUser.email
+          }, { merge: true })
+        )
+      );
+      showAdminToast(`Restored ${deleted.length} default listings`);
+    });
+
+    // 6. EDIT MODAL
+    function openAdminEditModal(item) {
+      editingItem = item;
+      editName.value = item.name || '';
+      editCity.value = item.city || 'Kolar';
+      editPhone.value = item.phone || '';
+      editAltPhone.value = item.altPhone || '';
+      editAddress.value = item.address || '';
+      editHours.value = item.hours || '';
+      editDesc.value = item.desc || '';
+      editVerified.checked = Boolean(item.verified);
+      adminEditModal.classList.remove('hidden');
+    }
+
+    function closeAdminEditModal() {
+      editingItem = null;
+      adminEditModal.classList.add('hidden');
+    }
+
+    closeAdminEditModalBtn.addEventListener('click', closeAdminEditModal);
+    cancelAdminEditBtn.addEventListener('click', closeAdminEditModal);
+
+    adminEditForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!editingItem) return;
+
+      const payload = {
+        name: editName.value.trim(),
+        city: editCity.value,
+        phone: editPhone.value.trim(),
+        altPhone: editAltPhone.value.trim(),
+        address: editAddress.value.trim(),
+        hours: editHours.value.trim() || 'Call to confirm availability',
+        desc: editDesc.value.trim(),
+        verified: editVerified.checked,
+        updatedAt: Date.now(),
+        updatedBy: currentAdminUser.email
+      };
+
+      const isBase = DEFAULT_ID_SET.has(editingItem.id);
+      if (isBase) {
+        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', editingItem.id), {
+          ...payload,
+          deleted: false
+        }, { merge: true });
+      } else {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', editingItem.id), payload);
+      }
+
+      closeAdminEditModal();
+      showAdminToast('Changes saved successfully');
+    });
+
+    // 7. CSV EXPORT (ADMIN ONLY)
+    function exportCsv(data, filename) {
+      const escapeCsv = (str) => `"${String(str || '').replace(/"/g, '""')}"`;
+      const headers = ['ID', 'Name', 'City', 'Phone', 'Alt Phone', 'Address', 'Categories', 'Hours', 'Status', 'Verified', 'Description'];
+      const rows = data.map((item) => [
+        item.id,
+        item.name,
+        item.city,
+        item.phone,
+        item.altPhone || '',
+        item.address,
+        (item.categories || []).join(' / '),
+        item.hours || '',
+        item.status || 'approved',
+        item.verified ? 'Yes' : 'No',
+        item.desc || ''
+      ].map(escapeCsv).join(','));
+
+      const csvContent = [headers.map(escapeCsv).join(','), ...rows].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      showAdminToast(`Exported ${data.length} listings to CSV`);
+    }
+
+    downloadActiveCsvBtn.addEventListener('click', () => {
+      exportCsv(getMergedActiveListings(), 'kolar-chintamani-active-listings.csv');
+    });
+
+    downloadPendingCsvBtn.addEventListener('click', () => {
+      exportCsv(getPendingSubmissions(), 'kolar-chintamani-pending-reviews.csv');
+    });
+  </script>
+</body>
+</html>
