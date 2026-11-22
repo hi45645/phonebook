@@ -1,0 +1,71 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: Check if user is authenticated admin
+    // Non-anonymous users authenticated via Email/Password or Google Sign-in are considered admin.
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isNonAnonymousAdmin() {
+      return isAuthenticated() && request.auth.token.firebase.sign_in_provider != 'anonymous';
+    }
+
+    function isAdmin() {
+      return isNonAnonymousAdmin();
+    }
+
+    // Community and public contacts collection
+    match /artifacts/{appId}/public/data/contacts/{contactId} {
+      // 1. Visitors can ONLY read approved contacts.
+      // Admin can read all contacts (including pending queue).
+      allow read: if resource.data.status == 'approved' || isAdmin();
+
+      // 2. Visitors can ONLY submit new contacts with status == 'pending' and verified == false.
+      // Strict field sanitization and type enforcement prevents malicious injections:
+      allow create: if (
+        (
+          request.resource.data.status == 'pending' &&
+          request.resource.data.verified == false &&
+          request.resource.data.name is string &&
+          request.resource.data.name.size() > 0 &&
+          request.resource.data.name.size() <= 100 &&
+          request.resource.data.phone is string &&
+          request.resource.data.phone.size() >= 10 &&
+          request.resource.data.phone.size() <= 25 &&
+          request.resource.data.city in ['Kolar', 'Chintamani'] &&
+          request.resource.data.categories is list &&
+          request.resource.data.categories.size() > 0 &&
+          request.resource.data.categories.size() <= 6 &&
+          request.resource.data.address is string &&
+          request.resource.data.address.size() > 0 &&
+          request.resource.data.address.size() <= 200
+        )
+        || isAdmin()
+      );
+
+      // 3. ONLY authenticated Admins can update (approve, edit) or delete contacts:
+      allow update, delete: if isAdmin();
+    }
+
+    // Base default listings overrides (soft deletions and field updates)
+    match /artifacts/{appId}/public/data/base_overrides/{overrideId} {
+      // Anyone can read overrides to know if a base contact was edited or deleted:
+      allow read: if true;
+      // ONLY Admin can write or delete overrides:
+      allow write: if isAdmin();
+    }
+
+    // User private saved favorites
+    match /artifacts/{appId}/users/{userId}/favorites/saved {
+      allow read, write: if isAuthenticated() && request.auth.uid == userId;
+    }
+
+    // Admins registry collection
+    match /artifacts/{appId}/admins/{adminId} {
+      allow read: if isAdmin();
+      allow write: if false; // Only manageable directly via Firebase Console
+    }
+  }
+}
