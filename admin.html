@@ -885,6 +885,21 @@
       }
     });
 
+    function formatAuthError(err) {
+      if (!err) return 'An unknown error occurred.';
+      if (err.code === 'auth/unauthorized-domain') {
+        const domain = window.location.hostname || 'your current domain';
+        return 'Domain unauthorized: "' + domain + '" is not in your Firebase Authorized Domains. In Firebase Console, go to Authentication > Settings > Authorized domains and add "' + domain + '".';
+      }
+      if (err.code === 'auth/popup-blocked') {
+        return 'Sign-in popup was blocked by browser. Please enable popups or sign in with Email & Password.';
+      }
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        return 'Invalid admin email or password.';
+      }
+      return err.message || 'Authentication failed. Please try again.';
+    }
+
     // Google Sign-In
     googleLoginBtn.addEventListener('click', async () => {
       loginErrorMsg.classList.add('hidden');
@@ -894,7 +909,7 @@
         showAdminToast('Welcome to Admin Portal');
       } catch (err) {
         console.error('Google sign-in error:', err);
-        loginErrorMsg.textContent = err.message || 'Failed to sign in with Google';
+        loginErrorMsg.textContent = formatAuthError(err);
         loginErrorMsg.classList.remove('hidden');
       }
     });
@@ -910,7 +925,7 @@
         showAdminToast('Signed in successfully');
       } catch (err) {
         console.error('Email sign-in error:', err);
-        loginErrorMsg.textContent = err.message || 'Invalid email or password';
+        loginErrorMsg.textContent = formatAuthError(err);
         loginErrorMsg.classList.remove('hidden');
       }
     });

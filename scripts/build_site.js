@@ -310,172 +310,184 @@ ${preRenderedCards}
   <!-- ==================== SUGGEST CONTACT MODAL (FOR PUBLIC REVIEW) ==================== -->
   <div
     id="addContactModal"
-    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/75 backdrop-blur-sm p-3 sm:p-6"
     role="dialog"
     aria-modal="true"
     aria-labelledby="modalTitle"
   >
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden my-8">
-      <div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white">
-        <div>
-          <h2 id="modalTitle" class="text-lg font-bold">Suggest a Local Contact</h2>
-          <p class="text-xs text-slate-300 mt-0.5">Submissions are reviewed before appearing publicly in the directory</p>
-        </div>
-        <button
-          id="closeModalBtn"
-          type="button"
-          aria-label="Close modal"
-          class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <form id="addContactForm" class="p-6 space-y-4">
-        <!-- Anti-Spam Honeypot Field (Invisible to real users, traps bots) -->
-        <div class="hidden" aria-hidden="true" style="display:none !important;">
-          <label for="website_url_hp">Do not fill this field</label>
-          <input type="text" name="website_url_hp" id="website_url_hp" tabindex="-1" autocomplete="off" />
-        </div>
-
-        <div>
-          <label for="inputName" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Business / Technician Name *</label>
-          <input
-            id="inputName"
-            type="text"
-            required
-            maxlength="100"
-            placeholder="e.g., Sri Balaji Plumbing Works"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div id="modalBackdropWrapper" class="min-h-full flex items-center justify-center py-4 sm:py-8 pointer-events-auto">
+      <div id="addContactModalCard" class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[85vh]">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-5 sm:px-6 py-4 bg-slate-900 text-white shrink-0">
           <div>
-            <label for="inputCity" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">City *</label>
-            <select
-              id="inputCity"
-              required
-              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-            >
-              <option value="Kolar">Kolar</option>
-              <option value="Chintamani">Chintamani</option>
-            </select>
+            <h2 id="modalTitle" class="text-base sm:text-lg font-bold">Suggest a Local Contact</h2>
+            <p class="text-xs text-slate-300 mt-0.5">Submissions are reviewed before appearing publicly in the directory</p>
           </div>
+          <button
+            id="closeModalBtn"
+            type="button"
+            aria-label="Close modal"
+            class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Scrollable Form Body -->
+        <form id="addContactForm" class="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4">
+          <!-- Inline Error Banner -->
+          <div id="modalErrorBanner" class="hidden p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 font-semibold flex items-start gap-2">
+            <svg class="w-4 h-4 text-rose-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <span id="modalErrorText"></span>
+          </div>
+
+          <!-- Dummy bot trap -->
+          <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+            <input type="text" name="b_fax_num" id="b_fax_num" tabindex="-1" autocomplete="off" />
+          </div>
+
           <div>
-            <label for="inputPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Primary Phone Number *</label>
+            <label for="inputName" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Business / Technician Name *</label>
             <input
-              id="inputPhone"
-              type="tel"
+              id="inputName"
+              type="text"
               required
-              maxlength="20"
-              placeholder="e.g., 098765 43210 or 9876543210"
+              maxlength="100"
+              placeholder="e.g., Sri Balaji Plumbing Works"
               class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
-        </div>
 
-        <div>
-          <label for="inputAltPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Alternate Phone Number (Optional)</label>
-          <input
-            id="inputAltPhone"
-            type="tel"
-            maxlength="20"
-            placeholder="e.g., 091234 56789"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-
-        <div>
-          <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5">Categories * <span class="font-normal normal-case text-slate-400">(Select one or more)</span></span>
-          <div id="categoryCheckboxes" class="grid grid-cols-2 gap-2">
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="Plumbers" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>Plumbers</span>
-            </label>
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="Electricians" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>Electricians</span>
-            </label>
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="Painters" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>Painters</span>
-            </label>
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="Carpenters" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>Carpenters</span>
-            </label>
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="AC & Appliance Repair" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>AC &amp; Appliance Repair</span>
-            </label>
-            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
-              <input type="checkbox" value="Welding & Fabrication" class="rounded text-indigo-600 focus:ring-indigo-500" />
-              <span>Welding &amp; Fabrication</span>
-            </label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="inputCity" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">City *</label>
+              <select
+                id="inputCity"
+                required
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              >
+                <option value="Kolar">Kolar</option>
+                <option value="Chintamani">Chintamani</option>
+              </select>
+            </div>
+            <div>
+              <label for="inputPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Primary Phone Number *</label>
+              <input
+                id="inputPhone"
+                type="tel"
+                required
+                maxlength="20"
+                placeholder="e.g., 9876543210 or 080..."
+                class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              />
+            </div>
           </div>
-        </div>
 
-        <div>
-          <label for="inputAddress" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Address / Area *</label>
-          <input
-            id="inputAddress"
-            type="text"
-            required
-            maxlength="200"
-            placeholder="e.g., MG Road, near Bus Stand, Kolar"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+          <div>
+            <label for="inputAltPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Alternate Phone Number (Optional)</label>
+            <input
+              id="inputAltPhone"
+              type="tel"
+              maxlength="20"
+              placeholder="e.g., 091234 56789"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
 
-        <div>
-          <label for="inputHours" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Operating Hours (Optional)</label>
-          <input
-            id="inputHours"
-            type="text"
-            maxlength="100"
-            placeholder="e.g., Mon–Sat 9:00 AM–8:00 PM"
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
+          <div>
+            <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5">Categories * <span class="font-normal normal-case text-slate-400">(Tap one or more)</span></span>
+            <div id="categoryCheckboxes" class="grid grid-cols-2 gap-2">
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Plumbers" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Plumbers</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Electricians" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Electricians</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Painters" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Painters</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Carpenters" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Carpenters</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="AC & Appliance Repair" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>AC &amp; Repair</span>
+              </label>
+              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 active:bg-slate-100 cursor-pointer text-xs sm:text-sm font-medium text-slate-700 select-none">
+                <input type="checkbox" value="Welding & Fabrication" class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Welding</span>
+              </label>
+            </div>
+          </div>
 
-        <div>
-          <label for="inputDesc" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Notes / Short Description (Optional)</label>
-          <textarea
-            id="inputDesc"
-            rows="2"
-            maxlength="300"
-            placeholder="Briefly describe services offered..."
-            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
-          ></textarea>
-        </div>
+          <div>
+            <label for="inputAddress" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Address / Area *</label>
+            <input
+              id="inputAddress"
+              type="text"
+              required
+              maxlength="200"
+              placeholder="e.g., MG Road, near Bus Stand, Kolar"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
 
-        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
-          <button
-            id="cancelModalBtn"
-            type="button"
-            class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button
-            id="submitContactBtn"
-            type="submit"
-            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer"
-          >
-            Submit for Review
-          </button>
-        </div>
-      </form>
+          <div>
+            <label for="inputHours" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Operating Hours (Optional)</label>
+            <input
+              id="inputHours"
+              type="text"
+              maxlength="100"
+              placeholder="e.g., Mon–Sat 9:00 AM–8:00 PM"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+
+          <div>
+            <label for="inputDesc" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Notes / Short Description (Optional)</label>
+            <textarea
+              id="inputDesc"
+              rows="2"
+              maxlength="300"
+              placeholder="Briefly describe services offered..."
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+            ></textarea>
+          </div>
+
+          <!-- Sticky Modal Footer -->
+          <div class="sticky bottom-0 bg-white/95 backdrop-blur-sm flex items-center justify-end gap-3 pt-3 pb-1 border-t border-slate-100">
+            <button
+              id="cancelModalBtn"
+              type="button"
+              class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              id="submitContactBtn"
+              type="submit"
+              class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white text-sm font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              Submit for Review
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
   <!-- ==================== TOAST NOTIFICATION ==================== -->
   <div
     id="toastContainer"
-    class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2 items-end"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] pointer-events-none flex flex-col gap-2 items-center w-full max-w-sm px-4"
     aria-live="polite"
   ></div>
 
@@ -552,14 +564,7 @@ ${preRenderedCards}
         db = getFirestore(app);
         auth = getAuth(app);
 
-        // Anonymous sign-in for visitor session
-        const cred = await signInAnonymously(auth);
-        currentUser = cred.user;
-        setSyncStatus('live', 'Live Cloud Sync Active');
-
-        if (!currentUser) return;
-
-        // Listen to shared public approved contacts
+        // 1. Listen to shared public approved contacts immediately (works for public read)
         const contactsRef = collection(db, 'artifacts', appId, 'public', 'data', 'contacts');
         onSnapshot(
           contactsRef,
@@ -592,12 +597,11 @@ ${preRenderedCards}
             renderListings();
           },
           (error) => {
-            console.error('Contacts snapshot error:', error);
-            setSyncStatus('offline', 'Offline Mode');
+            console.warn('Contacts snapshot warning:', error);
           }
         );
 
-        // Listen to base listings overrides & soft-deletes
+        // 2. Listen to base listings overrides & soft-deletes
         const overridesRef = collection(db, 'artifacts', appId, 'public', 'data', 'base_overrides');
         onSnapshot(
           overridesRef,
@@ -610,25 +614,39 @@ ${preRenderedCards}
             renderListings();
           },
           (error) => {
-            console.error('Base overrides snapshot error:', error);
+            console.warn('Base overrides snapshot warning:', error);
           }
         );
 
-        // Listen to private user saved favorites
-        const favDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favorites', 'saved');
-        onSnapshot(
-          favDocRef,
-          (docSnap) => {
-            if (docSnap.exists()) {
-              const ids = docSnap.data().ids;
-              favorites = new Set(Array.isArray(ids) ? ids : []);
-              renderListings();
+        // 3. Authenticate visitor anonymously in background (non-blocking)
+        signInAnonymously(auth)
+          .then((cred) => {
+            currentUser = cred.user;
+            setSyncStatus('live', 'Live Cloud Sync Active');
+
+            if (currentUser) {
+              const favDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favorites', 'saved');
+              onSnapshot(
+                favDocRef,
+                (docSnap) => {
+                  if (docSnap.exists()) {
+                    const ids = docSnap.data().ids;
+                    favorites = new Set(Array.isArray(ids) ? ids : []);
+                    renderListings();
+                  }
+                },
+                (error) => {
+                  console.warn('Favorites snapshot warning:', error);
+                }
+              );
             }
-          },
-          (error) => {
-            console.error('Favorites snapshot error:', error);
-          }
-        );
+          })
+          .catch((authErr) => {
+            console.warn('Anonymous auth note (domain not whitelisted or offline):', authErr);
+            // Public viewing continues without crashing
+            setSyncStatus('live', 'Live Cloud Sync Active');
+          });
+
       } catch (err) {
         console.error('Firebase init failed, running in offline mode:', err);
         setSyncStatus('offline', 'Offline Mode');
@@ -1233,14 +1251,41 @@ ${preRenderedCards}
     });
 
     // 7. PUBLIC SUBMISSION MODAL
+    function showModalError(msg) {
+      const banner = document.getElementById('modalErrorBanner');
+      const text = document.getElementById('modalErrorText');
+      if (banner && text) {
+        text.textContent = msg;
+        banner.classList.remove('hidden');
+        banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else {
+        showToast(msg, 'error');
+      }
+    }
+
+    function clearModalError() {
+      const banner = document.getElementById('modalErrorBanner');
+      const text = document.getElementById('modalErrorText');
+      if (banner && text) {
+        text.textContent = '';
+        banner.classList.add('hidden');
+      }
+    }
+
     function openAddModal() {
+      clearModalError();
       addContactForm.reset();
       addContactModal.classList.remove('hidden');
       document.body.classList.add('overflow-hidden');
-      document.getElementById('inputName').focus();
+      // Only autofocus on desktop; avoids jumping viewport on mobile
+      if (window.innerWidth >= 640) {
+        const firstInput = document.getElementById('inputName');
+        if (firstInput) firstInput.focus();
+      }
     }
 
     function closeModal() {
+      clearModalError();
       addContactModal.classList.add('hidden');
       document.body.classList.remove('overflow-hidden');
       addContactForm.reset();
@@ -1250,9 +1295,23 @@ ${preRenderedCards}
     closeModalBtn.addEventListener('click', closeModal);
     cancelModalBtn.addEventListener('click', closeModal);
 
-    addContactModal.addEventListener('click', (e) => {
-      if (e.target === addContactModal) closeModal();
-    });
+    // Prevent backdrop click dismiss on mobile touch scroll:
+    // Only close if user clicks directly on the outer backdrop wrapper, NOT inside the card
+    const modalBackdropWrapper = document.getElementById('modalBackdropWrapper');
+    if (modalBackdropWrapper) {
+      modalBackdropWrapper.addEventListener('click', (e) => {
+        if (e.target === modalBackdropWrapper || e.target === addContactModal) {
+          closeModal();
+        }
+      });
+    }
+
+    const modalCard = document.getElementById('addContactModalCard');
+    if (modalCard) {
+      modalCard.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !addContactModal.classList.contains('hidden')) {
@@ -1262,10 +1321,11 @@ ${preRenderedCards}
 
     addContactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      clearModalError();
 
-      // Bot honeypot check
-      const honeypotVal = document.getElementById('website_url_hp').value;
-      if (honeypotVal) {
+      // Bot honeypot check (obscure name immune to normal browser autofill)
+      const botTrap = document.getElementById('b_fax_num');
+      if (botTrap && botTrap.value && botTrap.value.trim().length > 0) {
         closeModal();
         return; // Silently drop bot submissions
       }
@@ -1281,56 +1341,96 @@ ${preRenderedCards}
       const address = document.getElementById('inputAddress').value.trim();
       const desc = document.getElementById('inputDesc').value.trim();
 
-      if (!name || !address || !phoneRaw) {
-        showToast('Please provide a business name, phone number, and address', 'error');
+      if (!name) {
+        showModalError('Please enter a business or technician name.');
+        return;
+      }
+      if (!address) {
+        showModalError('Please enter an address or area (e.g. MG Road, Kolar).');
+        return;
+      }
+      if (!phoneRaw) {
+        showModalError('Please enter a mobile phone number.');
         return;
       }
 
-      // Validate 10-digit Indian mobile number
-      const phoneDigits = phoneRaw.replace(/\\D/g, '');
-      const validTen = phoneDigits.length >= 10 ? phoneDigits.slice(-10) : '';
-      if (!/^[6-9]\\d{9}$/.test(validTen)) {
-        showToast('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210)', 'error');
+      // Flexible mobile number validation:
+      let phoneDigits = phoneRaw.replace(/\\D/g, '');
+      if (phoneDigits.startsWith('91') && phoneDigits.length === 12) {
+        phoneDigits = phoneDigits.slice(2);
+      } else if (phoneDigits.startsWith('0') && phoneDigits.length === 11) {
+        phoneDigits = phoneDigits.slice(1);
+      }
+
+      if (phoneDigits.length !== 10 || !/^[6-9]\\d{9}$/.test(phoneDigits)) {
+        showModalError('Please enter a valid 10-digit Indian mobile number (e.g. 9876543210 or +91 98765 43210).');
         return;
       }
 
       if (selectedCategories.length === 0) {
-        showToast('Please select at least one service category', 'error');
+        showModalError('Please select at least one service category.');
         return;
       }
+
+      const formattedPhone = '+91 ' + phoneDigits.slice(0, 5) + ' ' + phoneDigits.slice(5);
+      const defaultDesc = selectedCategories.join(' & ') + ' service in ' + city + '.';
 
       const contactPayload = {
         name: name.slice(0, 100),
         city,
         categories: selectedCategories,
-        phone: phoneRaw.slice(0, 25),
+        phone: formattedPhone,
         altPhone: altPhoneRaw ? altPhoneRaw.slice(0, 25) : '',
         address: address.slice(0, 200),
         hours: hoursRaw ? hoursRaw.slice(0, 100) : 'Call to confirm availability',
-        desc: desc ? desc.slice(0, 300) : \`\${selectedCategories.join(' & ')} service in \${city}.\`,
+        desc: desc ? desc.slice(0, 300) : defaultDesc,
         status: 'pending',
         verified: false,
         createdAt: Date.now(),
         createdBy: currentUser ? currentUser.uid : 'visitor'
       };
 
-      if (db) {
+      if (!db) {
+        showModalError('Database connection is not ready. Please check your internet connection.');
+        return;
+      }
+
+      try {
         submitContactBtn.disabled = true;
-        submitContactBtn.textContent = 'Submitting...';
-        try {
-          await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), contactPayload);
-          closeModal();
-          showToast('Thank you! Contact submitted for review and will appear once approved by admin.');
-        } catch (err) {
-          console.error('Submission error:', err);
-          showToast('Failed to submit contact. Please check your network and try again.', 'error');
-        } finally {
-          submitContactBtn.disabled = false;
-          submitContactBtn.textContent = 'Submit for Review';
+        submitContactBtn.innerHTML = '<span class="inline-block animate-spin mr-1">&#9696;</span> Submitting...';
+
+        // If anonymous auth was delayed or failed earlier, attempt once more before writing
+        if (!currentUser && auth) {
+          try {
+            const cred = await signInAnonymously(auth);
+            currentUser = cred.user;
+            if (currentUser) {
+              contactPayload.createdBy = currentUser.uid;
+            }
+          } catch (authErr) {
+            console.warn('Anonymous auth retry note:', authErr);
+          }
         }
-      } else {
+
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), contactPayload);
         closeModal();
-        showToast('Offline: Could not connect to cloud sync to submit.', 'error');
+        showToast('Thank you! Contact submitted for review. It will appear once approved by admin.');
+      } catch (err) {
+        console.error('Submission error:', err);
+        let errMsg = 'Failed to submit contact. ';
+        if (err && err.code === 'permission-denied') {
+          errMsg += 'Database permission denied. (Please verify firestore.rules allow pending submissions or verify Firebase Authorized Domains).';
+        } else if (err && err.code === 'unavailable') {
+          errMsg += 'Network unavailable. Please check your internet connection.';
+        } else if (err && err.message) {
+          errMsg += err.message;
+        } else {
+          errMsg += 'Please check your connection and try again.';
+        }
+        showModalError(errMsg);
+      } finally {
+        submitContactBtn.disabled = false;
+        submitContactBtn.textContent = 'Submit for Review';
       }
     });
 
@@ -1792,6 +1892,21 @@ function buildAdminHtml() {
       }
     });
 
+    function formatAuthError(err) {
+      if (!err) return 'An unknown error occurred.';
+      if (err.code === 'auth/unauthorized-domain') {
+        const domain = window.location.hostname || 'your current domain';
+        return 'Domain unauthorized: "' + domain + '" is not in your Firebase Authorized Domains. In Firebase Console, go to Authentication > Settings > Authorized domains and add "' + domain + '".';
+      }
+      if (err.code === 'auth/popup-blocked') {
+        return 'Sign-in popup was blocked by browser. Please enable popups or sign in with Email & Password.';
+      }
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        return 'Invalid admin email or password.';
+      }
+      return err.message || 'Authentication failed. Please try again.';
+    }
+
     // Google Sign-In
     googleLoginBtn.addEventListener('click', async () => {
       loginErrorMsg.classList.add('hidden');
@@ -1801,7 +1916,7 @@ function buildAdminHtml() {
         showAdminToast('Welcome to Admin Portal');
       } catch (err) {
         console.error('Google sign-in error:', err);
-        loginErrorMsg.textContent = err.message || 'Failed to sign in with Google';
+        loginErrorMsg.textContent = formatAuthError(err);
         loginErrorMsg.classList.remove('hidden');
       }
     });
@@ -1817,7 +1932,7 @@ function buildAdminHtml() {
         showAdminToast('Signed in successfully');
       } catch (err) {
         console.error('Email sign-in error:', err);
-        loginErrorMsg.textContent = err.message || 'Invalid email or password';
+        loginErrorMsg.textContent = formatAuthError(err);
         loginErrorMsg.classList.remove('hidden');
       }
     });
