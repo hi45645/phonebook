@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kolar &amp; Chintamani Service Phonebook</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+    /* Custom subtle scrollbar for category pills on mobile */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col antialiased selection:bg-indigo-100 selection:text-indigo-900">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-30 shadow-lg shadow-slate-900/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Brand & Live Sync Status -->
+        <div class="flex items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 to-emerald-500 flex items-center justify-center shadow-md shadow-indigo-500/20 shrink-0">
+              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Kolar &amp; Chintamani Phonebook</h1>
+                <span id="syncStatusPill" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-800 text-slate-300 border border-slate-700">
+                  <span id="syncStatusDot" class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                  <span id="syncStatusText">Connecting...</span>
+                </span>
+              </div>
+              <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Verified local plumbers, electricians, painters, carpenters &amp; technicians</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Stats & Top Action Buttons -->
+        <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2.5">
+          <!-- Stats Pills -->
+          <div class="flex items-center gap-1.5 bg-slate-800/90 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs">
+            <span class="text-slate-400">Total:</span>
+            <span id="statTotal" class="font-bold text-white">36</span>
+            <span class="text-slate-600 mx-1">|</span>
+            <span class="text-slate-400">Kolar:</span>
+            <span id="statKolar" class="font-bold text-indigo-300">22</span>
+            <span class="text-slate-600 mx-1">|</span>
+            <span class="text-slate-400">Chintamani:</span>
+            <span id="statChintamani" class="font-bold text-emerald-300">14</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              id="openTrashModalBtn"
+              type="button"
+              class="hidden inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 active:scale-[0.98] text-amber-200 text-xs sm:text-sm font-medium border border-amber-400/30 transition-all cursor-pointer"
+              title="Restore deleted default contacts"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 0 3-6.7L3 8m0 0V3m0 5h5" />
+              </svg>
+              <span>Restore (<span id="trashCountBadge">0</span>)</span>
+            </button>
+
+            <button
+              id="exportCsvBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 active:scale-[0.98] text-slate-200 text-xs sm:text-sm font-semibold border border-slate-700 transition-all cursor-pointer"
+              title="Export current listings to CSV"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+              </svg>
+              <span>Export CSV</span>
+            </button>
+
+            <button
+              id="openAddModalBtn"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold shadow-sm shadow-indigo-600/30 transition-all cursor-pointer"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.4" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14" />
+              </svg>
+              <span>Add Contact</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- Search & Filters Card -->
+    <section class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-4 sm:p-5 mb-6 space-y-4">
+      <div class="flex flex-col md:flex-row gap-3">
+        <!-- Search Input -->
+        <div class="relative flex-1">
+          <svg class="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search by name, service, area, or phone number..."
+            class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow"
+          />
+        </div>
+
+        <!-- City Filter & Saved Favorites Toggle -->
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200/80" role="group" aria-label="Filter by city">
+            <button type="button" data-city="All" class="city-btn px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer">All</button>
+            <button type="button" data-city="Kolar" class="city-btn px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer">Kolar</button>
+            <button type="button" data-city="Chintamani" class="city-btn px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer">Chintamani</button>
+          </div>
+
+          <button
+            id="favToggleBtn"
+            type="button"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-all cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <span>Saved (<span id="favCountBadge">0</span>)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5" id="categoryPillsContainer">
+        <button type="button" data-category="All" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">All Services</button>
+        <button type="button" data-category="Plumbers" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Plumbers</button>
+        <button type="button" data-category="Electricians" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Electricians</button>
+        <button type="button" data-category="Painters" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Painters</button>
+        <button type="button" data-category="Carpenters" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Carpenters</button>
+        <button type="button" data-category="AC & Appliance Repair" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">AC &amp; Appliance Repair</button>
+        <button type="button" data-category="Welding & Fabrication" class="cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer">Welding &amp; Fabrication</button>
+      </div>
+    </section>
+
+    <!-- Results Count Bar -->
+    <div class="flex items-center justify-between mb-4 px-1">
+      <p id="resultsSummary" class="text-sm font-medium text-slate-600">Showing 36 contacts</p>
+      <button
+        id="resetFiltersBtn"
+        type="button"
+        class="hidden text-xs sm:text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors cursor-pointer"
+      >
+        Reset all filters
+      </button>
+    </div>
+
+    <!-- Listings Grid -->
+    <section id="listingsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <!-- Contact cards injected dynamically -->
+    </section>
+
+    <!-- Empty State -->
+    <section id="emptyState" class="hidden bg-white rounded-2xl border border-slate-200 p-10 text-center max-w-lg mx-auto my-8">
+      <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-4">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35" />
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-slate-900">No matching contacts found</h2>
+      <p class="text-sm text-slate-500 mt-1">Try adjusting your search keywords, city, or category filters—or add a new local contact.</p>
+      <div class="mt-5 flex items-center justify-center gap-3">
+        <button
+          id="emptyResetBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors cursor-pointer"
+        >
+          Clear Filters
+        </button>
+        <button
+          id="emptyAddBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors cursor-pointer"
+        >
+          Add New Contact
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-white border-t border-slate-200 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
+      <p>Kolar &amp; Chintamani Local Service Phonebook — All listed numbers are callable.</p>
+      <p>Tip: Tap <strong>Save .vcf</strong> on any card to import directly into your phone contacts.</p>
+    </div>
+  </footer>
+
+  <!-- ==================== ADD / EDIT CONTACT MODAL ==================== -->
+  <div
+    id="addContactModal"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden my-8">
+      <div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white">
+        <div>
+          <h2 id="modalTitle" class="text-lg font-bold">Add New Local Contact</h2>
+          <p class="text-xs text-slate-300 mt-0.5">Add a trusted technician or shop to the shared phonebook</p>
+        </div>
+        <button
+          id="closeModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form id="addContactForm" class="p-6 space-y-4">
+        <div>
+          <label for="inputName" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Business / Technician Name *</label>
+          <input
+            id="inputName"
+            type="text"
+            required
+            placeholder="e.g., Sri Balaji Plumbing Works"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="inputCity" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">City *</label>
+            <select
+              id="inputCity"
+              required
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="Kolar">Kolar</option>
+              <option value="Chintamani">Chintamani</option>
+            </select>
+          </div>
+          <div>
+            <label for="inputPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Primary Phone Number *</label>
+            <input
+              id="inputPhone"
+              type="tel"
+              required
+              placeholder="e.g., 098765 43210"
+              class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="inputAltPhone" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Alternate Phone Number (Optional)</label>
+          <input
+            id="inputAltPhone"
+            type="tel"
+            placeholder="e.g., 091234 56789"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <span class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1.5">Categories * <span class="font-normal normal-case text-slate-400">(Select one or more)</span></span>
+          <div id="categoryCheckboxes" class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="Plumbers" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>Plumbers</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="Electricians" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>Electricians</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="Painters" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>Painters</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="Carpenters" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>Carpenters</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="AC & Appliance Repair" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>AC &amp; Appliance Repair</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer text-xs sm:text-sm font-medium text-slate-700">
+              <input type="checkbox" value="Welding & Fabrication" class="rounded text-indigo-600 focus:ring-indigo-500" />
+              <span>Welding &amp; Fabrication</span>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label for="inputAddress" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Address / Area *</label>
+          <input
+            id="inputAddress"
+            type="text"
+            required
+            placeholder="e.g., MG Road, near Bus Stand, Kolar"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label for="inputHours" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Operating Hours (Optional)</label>
+          <input
+            id="inputHours"
+            type="text"
+            placeholder="e.g., Mon–Sat 9:00 AM–8:00 PM"
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          />
+        </div>
+
+        <div>
+          <label for="inputDesc" class="block text-xs font-semibold uppercase tracking-wide text-slate-600 mb-1">Notes / Short Description (Optional)</label>
+          <textarea
+            id="inputDesc"
+            rows="2"
+            placeholder="Briefly describe the services offered..."
+            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+          ></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
+          <button
+            id="cancelModalBtn"
+            type="button"
+            class="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            id="submitContactBtn"
+            type="submit"
+            class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer"
+          >
+            Save Contact
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== DELETE CONFIRMATION MODAL ==================== -->
+  <div
+    id="deleteConfirmModal"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="deleteModalTitle"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 p-6">
+      <div class="w-11 h-11 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
+        </svg>
+      </div>
+      <h3 id="deleteModalTitle" class="text-lg font-bold text-slate-900">Delete Contact?</h3>
+      <p id="deleteModalMessage" class="mt-1.5 text-sm text-slate-600">
+        This will remove this listing from the shared directory for all users.
+      </p>
+      <div class="mt-6 flex items-center justify-end gap-2.5">
+        <button
+          id="cancelDeleteBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          Cancel
+        </button>
+        <button
+          id="confirmDeleteBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TRASH / RESTORE DEFAULTS MODAL ==================== -->
+  <div
+    id="trashModal"
+    class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="trashModalTitle"
+  >
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden">
+      <div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white">
+        <div>
+          <h2 id="trashModalTitle" class="text-lg font-bold">Deleted Default Contacts</h2>
+          <p class="text-xs text-slate-300 mt-0.5">Restore any accidentally removed base listings</p>
+        </div>
+        <button
+          id="closeTrashModalBtn"
+          type="button"
+          aria-label="Close modal"
+          class="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="trashListContainer" class="p-5 max-h-80 overflow-y-auto space-y-2.5">
+        <!-- Deleted base listings injected dynamically -->
+      </div>
+
+      <div class="flex items-center justify-between gap-3 px-6 py-4 bg-slate-50 border-t border-slate-200">
+        <button
+          id="closeTrashFooterBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-200/70 transition-colors cursor-pointer"
+        >
+          Close
+        </button>
+        <button
+          id="restoreAllDefaultsBtn"
+          type="button"
+          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold shadow-sm transition-all cursor-pointer"
+        >
+          Restore All Defaults
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION ==================== -->
+  <div
+    id="toastContainer"
+    class="fixed bottom-5 right-5 z-50 pointer-events-none flex flex-col gap-2 items-end"
+    aria-live="polite"
+  ></div>
+
+  <!-- ==================== APPLICATION SCRIPT ==================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, addDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // =========================================================================
+    // 1. VERIFIED BASE DIRECTORY DATA (36 CALLABLE LISTINGS: 22 KOLAR, 14 CHINTAMANI)
+    // =========================================================================
+    const DEFAULT_LISTINGS = [
+      // --- KOLAR: PLUMBERS ---
+      {
+        id: "kolar-plumb-1",
+        name: "Mathaji Enterprises Kolar",
+        city: "Kolar",
+        categories: ["Plumbers"],
+        phone: "090366 19344",
+        address: "Tekal Rd, Kalavanchi, Petechamanahalli, Karnataka 563101",
+        hours: "Mon–Tue 8:30 AM–8:00 PM; Wed–Sat 8:00 AM–8:00 PM; Sun Closed",
+        desc: "Plumbing services and supplies in the Kalavanchi area of Kolar."
+      },
+      {
+        id: "kolar-plumb-2",
+        name: "Electrical And Plumbing cera enterprises",
+        city: "Kolar",
+        categories: ["Plumbers", "Electricians"],
+        phone: "079750 67911",
+        address: "6, Bhavani Talkies Road, Karanji Katte, Muneshwara Nagar, Kolar, Karnataka 563101",
+        hours: "Call to confirm availability",
+        desc: "Handles both plumbing and electrical work in Muneshwara Nagar."
+      },
+
+      // --- KOLAR: ELECTRICIANS ---
+      {
+        id: "kolar-elec-1",
+        name: "Smart Service Electrician in Kolar",
+        city: "Kolar",
+        categories: ["Electricians"],
+        phone: "082170 33123",
+        address: "Mahatma Gandhi Rd, Kanakanapalya, Doddapet, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 9:00 AM–5:00 PM",
+        desc: "Residential and commercial electrical repair services in Doddapet."
+      },
+      {
+        id: "kolar-elec-2",
+        name: "Sri Venkateswara electricals",
+        city: "Kolar",
+        categories: ["Electricians"],
+        phone: "084318 51030",
+        address: "Gowripete, Kolar, Karnataka 563101",
+        hours: "Call to confirm availability",
+        desc: "Local electrical service provider located in Gowripete."
+      },
+      {
+        id: "kolar-elec-3",
+        name: "Minhaj Electricals",
+        city: "Kolar",
+        categories: ["Electricians"],
+        phone: "099808 57057",
+        address: "Antharagange Main Rd, behind Mayuri Bakery, Muneshwara Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri 9:00 AM–12:30 PM, 3:30 PM–8:00 PM",
+        desc: "Electrical repairs and installations along Antharagange Main Road."
+      },
+
+      // --- KOLAR: PAINTERS ---
+      {
+        id: "kolar-paint-1",
+        name: "ROYALPAINTERS",
+        city: "Kolar",
+        categories: ["Painters"],
+        phone: "094825 45457",
+        address: "44M8+CPQ, Keelu Kote, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:30 AM–6:30 PM; Fri Closed",
+        desc: "Local painting contractor serving Keelu Kote and surrounding areas of Kolar."
+      },
+      {
+        id: "kolar-paint-2",
+        name: "Asian Paints Beautiful Homes Painting Service (Suresh Enterprises)",
+        city: "Kolar",
+        categories: ["Painters"],
+        phone: "08071 682 590",
+        address: "Suresh Enterprises, near R.T.O Office, Kanakanapalya, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 10:00 AM–9:30 PM",
+        desc: "Professional interior and exterior painting near the RTO Office."
+      },
+      {
+        id: "kolar-paint-3",
+        name: "Asian Paints Colourideas - Praja Enterprises",
+        city: "Kolar",
+        categories: ["Painters"],
+        phone: "08071 499 515",
+        address: "Ground Floor, MB Rd, opposite Venkateshwara Theatre, Raja Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri Closed",
+        desc: "Paint consultation, supplies, and painting services on MB Road."
+      },
+      {
+        id: "kolar-paint-4",
+        name: "Surya arts",
+        city: "Kolar",
+        categories: ["Painters"],
+        phone: "090357 47596",
+        address: "Kataripalya Main Road, near Bindhumalyam Kalyana Mantapa, Kolar, Karnataka 563101",
+        hours: "Mon–Sat 9:00 AM–9:00 PM; Sun Closed",
+        desc: "Painting and artistic wall work on Kataripalya Main Road."
+      },
+      {
+        id: "kolar-paint-5",
+        name: "Asian Paints Beautiful Homes Painting Service (Sri Kanta Gaargesh)",
+        city: "Kolar",
+        categories: ["Painters"],
+        phone: "08071 682 993",
+        address: "Sri Kanta Gaargesh Stores, Brahmin Street, New Bus Stand Road, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 10:00 AM–9:30 PM",
+        desc: "Authorized painting service branch near New Bus Stand Road."
+      },
+
+      // --- KOLAR: AC & APPLIANCE REPAIR ---
+      {
+        id: "kolar-ac-1",
+        name: "ASeZ Enterprises",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "085533 37089",
+        address: "Kolar - Arahalli Rd, Rahmath Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–12:00 PM, 3:30 PM–7:00 PM",
+        desc: "AC repair and servicing in Rahmath Nagar."
+      },
+      {
+        id: "kolar-ac-2",
+        name: "KK electronics",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "086607 72665",
+        address: "Head Post Office Rd, Gowripete, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 10:00 AM–6:30 PM",
+        desc: "AC and home appliance repairs on Head Post Office Road."
+      },
+      {
+        id: "kolar-ac-3",
+        name: "aalian tech solutions",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "089511 78895",
+        address: "Head Post Office Rd, beside Mysore Bank, opposite Lateefa Banu Masjid, Gowripete, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri 3:00 PM–8:00 PM",
+        desc: "Services air conditioners and household appliances in Gowripete."
+      },
+      {
+        id: "kolar-ac-4",
+        name: "Unique Solution",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "098800 68451",
+        address: "1st Phase, 2nd Block, 791, KUDA Layout, Tamaka, Kolar, Karnataka 563103",
+        hours: "Mon–Sat 9:00 AM–7:00 PM; Sun Closed",
+        desc: "AC repair services in the Tamaka / KUDA Layout area."
+      },
+      {
+        id: "kolar-ac-5",
+        name: "LG Service Centre",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "090355 26190",
+        address: "44QJ+QCP, MB Rd, Kumbarpet, Raja Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 10:00 AM–10:00 PM",
+        desc: "Brand-specific AC and appliance service in Raja Nagar."
+      },
+      {
+        id: "kolar-ac-6",
+        name: "ORO HOME APPLIANCES SERVICE",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "080 6217 7668",
+        address: "Kolar-Chikkaballapur Rd, opposite Khaja Eidgha, Sangondahalli, Kolar, Karnataka 563101",
+        hours: "Mon–Sun 9:00 AM–10:00 PM",
+        desc: "Repairs major household appliances along the Kolar–Chikkaballapur Road."
+      },
+      {
+        id: "kolar-ac-7",
+        name: "A R M Home appliances",
+        city: "Kolar",
+        categories: ["AC & Appliance Repair"],
+        phone: "080506 24099",
+        address: "10th Cross, Bangalore Main Rd, near Bilal Masjid, Shaheensha Nagar, Kolar, Karnataka 563101",
+        hours: "Call to confirm availability",
+        desc: "Appliance repair services near Kolar Clock Tower."
+      },
+
+      // --- KOLAR: WELDING & FABRICATION ---
+      {
+        id: "kolar-weld-1",
+        name: "KMD TINKER AND ENGINEERING WORKS",
+        city: "Kolar",
+        categories: ["Welding & Fabrication"],
+        phone: "087929 45778",
+        address: "Kolar Bypass Rd, near Pavan College Field, Kalavanchi, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 8:00 AM–8:00 PM; Fri 2:30 PM–8:00 PM",
+        desc: "Welding, tinkering, and metalwork near Pavan College Field."
+      },
+      {
+        id: "kolar-weld-2",
+        name: "M Z Engineering warks",
+        city: "Kolar",
+        categories: ["Welding & Fabrication"],
+        phone: "097407 94788",
+        address: "Muneshwara Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun Open 24 hours; Fri Closed",
+        desc: "Welding and engineering fabrication in Muneshwara Nagar."
+      },
+      {
+        id: "kolar-weld-3",
+        name: "FAMOUS ENGINEERING WARKS KOLAR",
+        city: "Kolar",
+        categories: ["Welding & Fabrication"],
+        phone: "076767 68606",
+        address: "CB Pure Main Road, Kolar - Arahalli Rd, Rahmath Nagar, Kolar, Karnataka 563101",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–8:00 PM; Fri Closed",
+        desc: "Metal fabrication and welding work in Rahmath Nagar."
+      },
+      {
+        id: "kolar-weld-4",
+        name: "Shiva Engineering Works",
+        city: "Kolar",
+        categories: ["Welding & Fabrication"],
+        phone: "091417 38373",
+        address: "Kolar - Malur Rd, near APMC Yard, Vijayanagara, Ammerahalli, Karnataka 563101",
+        hours: "Mon–Sat 9:00 AM–8:00 PM; Sun Closed",
+        desc: "Welding and fabrication services near the APMC Yard."
+      },
+      {
+        id: "kolar-weld-5",
+        name: "Sri Maruthi Engineering Works",
+        city: "Kolar",
+        categories: ["Welding & Fabrication"],
+        phone: "091089 12435",
+        address: "Bangarpet Rd, Vinoba Nagar, Dodda Hassala, Karnataka 563101",
+        hours: "Mon–Sun 9:00 AM–6:00 PM",
+        desc: "Engineering and welding works on Bangarpet Road."
+      },
+
+      // --- CHINTAMANI: PLUMBERS & ELECTRICIANS ---
+      {
+        id: "chint-elec-1",
+        name: "Sakib electrician and plumber",
+        city: "Chintamani",
+        categories: ["Plumbers", "Electricians"],
+        phone: "077601 03170",
+        address: "5th Cross, Chowdareddy Palya, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 8:00 AM–6:00 PM",
+        desc: "Provides both plumbing and electrical repair services in Chowdareddy Palya."
+      },
+      {
+        id: "chint-elec-2",
+        name: "Ziya Bharath Electrical Services",
+        city: "Chintamani",
+        categories: ["Electricians"],
+        phone: "099643 56707",
+        address: "Gajanana Circle, Ayubia Masjid Rd, Chintamani, Karnataka 563125",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–5:00 PM",
+        desc: "Electrical repairs and appliance servicing near Gajanana Circle."
+      },
+      {
+        id: "chint-elec-3",
+        name: "Rahul Electricals Works",
+        city: "Chintamani",
+        categories: ["Electricians"],
+        phone: "094834 43090",
+        address: "Polytechnic Rd, opp. RK Hospital, KR Extension, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 7:00 AM–8:00 PM",
+        desc: "Electrical services opposite RK Hospital in KR Extension."
+      },
+
+      // --- CHINTAMANI: PAINTERS ---
+      {
+        id: "chint-paint-1",
+        name: "ANAND PAINT HOUSE",
+        city: "Chintamani",
+        categories: ["Painters"],
+        phone: "081474 70600",
+        address: "Near KSRTC Bus Stand, Chelur Road, Chintamani, Karnataka 563125",
+        hours: "Mon–Tue, Thu–Sun 8:30 AM–7:30 PM; Wed 8:30 AM–3:00 PM",
+        desc: "Supplies paints and connects customers with painting solutions near the KSRTC Bus Stand."
+      },
+      {
+        id: "chint-paint-2",
+        name: "Birla Opus Paint Gallery - K S Subbarayappa Hardware",
+        city: "Chintamani",
+        categories: ["Painters"],
+        phone: "08071 875 952",
+        address: "MG Rd, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 8:30 AM–8:00 PM",
+        desc: "Paint products and painting guidance on MG Road."
+      },
+      {
+        id: "chint-paint-3",
+        name: "Asian Paint Painting Service's",
+        city: "Chintamani",
+        categories: ["Painters"],
+        phone: "1800 266 2090",
+        address: "MG Rd, Chintamani, Munthakadirenahalli, Karnataka 563125",
+        hours: "Call to schedule",
+        desc: "Home painting bookings in Chintamani."
+      },
+      {
+        id: "chint-paint-4",
+        name: "Asian Paints Colour Cube - Vinayaka Hardware Stores",
+        city: "Chintamani",
+        categories: ["Painters"],
+        phone: "080 4594 9916",
+        address: "Ground Floor, opposite KS Subbarayappa Glass & Plywood, Tippu Nagar, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 10:00 AM–9:30 PM",
+        desc: "Paint supplies and color consultation in Tippu Nagar."
+      },
+      {
+        id: "chint-paint-5",
+        name: "Asian Paints Beautiful Homes Painting Service",
+        city: "Chintamani",
+        categories: ["Painters"],
+        phone: "081474 70600",
+        address: "Ground Floor, Chelur Rd, near KSRTC Bus Stand Road, Keerthi Nagar, Chintamani, Karnataka 563125",
+        hours: "Mon–Tue, Thu–Sun 10:00 AM–7:00 PM; Wed 10:00 AM–2:00 PM",
+        desc: "Turnkey painting services in Keerthi Nagar."
+      },
+
+      // --- CHINTAMANI: CARPENTERS ---
+      {
+        id: "chint-carp-1",
+        name: "ARA interior works",
+        city: "Chintamani",
+        categories: ["Carpenters"],
+        phone: "078924 44955",
+        address: "Chintamani, Karnataka 563125",
+        hours: "Mon–Sun (Call to confirm hours)",
+        desc: "Carpentry, woodwork, and interior installations in Chintamani."
+      },
+
+      // --- CHINTAMANI: AC & APPLIANCE REPAIR ---
+      {
+        id: "chint-ac-1",
+        name: "Girias Chintamani",
+        city: "Chintamani",
+        categories: ["AC & Appliance Repair"],
+        phone: "090362 89552",
+        address: "Bangalore Rd, near RTO, Prabhakar Layout, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 10:30 AM–9:00 PM",
+        desc: "Major home appliance store and service support point near the RTO."
+      },
+      {
+        id: "chint-ac-2",
+        name: "Lakshmi Electronics",
+        city: "Chintamani",
+        categories: ["AC & Appliance Repair"],
+        phone: "098860 81127",
+        address: "Shop No. 41, Stadium Complex, Bangalore Rd, Chintamani, Karnataka 563125",
+        hours: "Call to confirm availability",
+        desc: "Electronics and appliance repairs at Stadium Complex."
+      },
+      {
+        id: "chint-ac-3",
+        name: "SKBS Enterprises",
+        city: "Chintamani",
+        categories: ["AC & Appliance Repair"],
+        phone: "074838 44429",
+        address: "Hoskote - Chintamani Rd, Ashwini Layout, Chintamani, Karnataka 563125",
+        hours: "Mon–Sun 9:00 AM–8:00 PM",
+        desc: "Appliance servicing in Ashwini Layout."
+      },
+
+      // --- CHINTAMANI: WELDING & FABRICATION ---
+      {
+        id: "chint-weld-1",
+        name: "RDR engineering and fabrication works",
+        city: "Chintamani",
+        categories: ["Welding & Fabrication"],
+        phone: "099167 31153",
+        address: "C347+QQJ, near Kisan Factory, Chintamani, Karnataka 563125",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–7:00 PM; Fri Closed",
+        desc: "Metal fabrication and welding services near Kisan Factory."
+      },
+      {
+        id: "chint-weld-2",
+        name: "S S Auto Works SyedFirozPasha",
+        city: "Chintamani",
+        categories: ["Welding & Fabrication"],
+        phone: "090367 91314",
+        address: "Sidlaghatta Road, Chintamani, Karnataka 563125",
+        hours: "Mon–Thu, Sat–Sun 9:00 AM–9:00 PM; Fri 9:00 AM–4:00 PM",
+        desc: "Metalwork and auto repair along Sidlaghatta Road."
+      }
+    ];
+
+    // =========================================================================
+    // 2. APPLICATION CONFIGURATION & STATE
+    // =========================================================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB0slPHF3q-eGa-0lkrF4M0OrTVp716QPk",
+      authDomain: "phonebook-fbf5f.firebaseapp.com",
+      projectId: "phonebook-fbf5f",
+      storageBucket: "phonebook-fbf5f.firebasestorage.app",
+      messagingSenderId: "799496474816",
+      appId: "1:799496474816:web:367b6787f479c1160e5d25"
+    };
+    const appId = "kolar-chintamani-phonebook";
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+    let communityListings = [];
+    let baseOverrides = {}; // Map of baseId -> override fields or { deleted: true }
+    let favorites = new Set();
+    let editingContact = null;
+    let pendingDeleteContact = null;
+
+    const DEFAULT_ID_SET = new Set(DEFAULT_LISTINGS.map((item) => item.id));
+
+    const filterState = {
+      search: '',
+      city: 'All',
+      category: 'All',
+      onlyFavorites: false
+    };
+
+    // DOM Elements
+    const syncStatusDot = document.getElementById('syncStatusDot');
+    const syncStatusText = document.getElementById('syncStatusText');
+    const statTotal = document.getElementById('statTotal');
+    const statKolar = document.getElementById('statKolar');
+    const statChintamani = document.getElementById('statChintamani');
+    const favCountBadge = document.getElementById('favCountBadge');
+
+    const searchInput = document.getElementById('searchInput');
+    const cityButtons = document.querySelectorAll('.city-btn');
+    const categoryPills = document.querySelectorAll('.cat-pill');
+    const favToggleBtn = document.getElementById('favToggleBtn');
+    const resultsSummary = document.getElementById('resultsSummary');
+    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    const listingsGrid = document.getElementById('listingsGrid');
+    const emptyState = document.getElementById('emptyState');
+    const emptyResetBtn = document.getElementById('emptyResetBtn');
+    const emptyAddBtn = document.getElementById('emptyAddBtn');
+
+    const addContactModal = document.getElementById('addContactModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = addContactModal.querySelector('p');
+    const openAddModalBtn = document.getElementById('openAddModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelModalBtn = document.getElementById('cancelModalBtn');
+    const addContactForm = document.getElementById('addContactForm');
+    const submitContactBtn = document.getElementById('submitContactBtn');
+
+    const deleteConfirmModal = document.getElementById('deleteConfirmModal');
+    const deleteModalMessage = document.getElementById('deleteModalMessage');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+    const openTrashModalBtn = document.getElementById('openTrashModalBtn');
+    const trashCountBadge = document.getElementById('trashCountBadge');
+    const trashModal = document.getElementById('trashModal');
+    const closeTrashModalBtn = document.getElementById('closeTrashModalBtn');
+    const closeTrashFooterBtn = document.getElementById('closeTrashFooterBtn');
+    const trashListContainer = document.getElementById('trashListContainer');
+    const restoreAllDefaultsBtn = document.getElementById('restoreAllDefaultsBtn');
+
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const toastContainer = document.getElementById('toastContainer');
+
+    // =========================================================================
+    // 3. FIREBASE INITIALIZATION & REAL-TIME SYNC (WITH OFFLINE FALLBACK)
+    // =========================================================================
+    function setSyncStatus(mode, text) {
+      syncStatusText.textContent = text;
+      syncStatusDot.className = 'w-1.5 h-1.5 rounded-full ';
+      if (mode === 'live') {
+        syncStatusDot.className += 'bg-emerald-400';
+      } else if (mode === 'error') {
+        syncStatusDot.className += 'bg-rose-400';
+      } else {
+        syncStatusDot.className += 'bg-amber-400';
+      }
+    }
+
+    async function initCloudSync() {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Automatically sign in anonymously on load
+        const cred = await signInAnonymously(auth);
+        currentUser = cred.user;
+        setSyncStatus('live', 'Live Cloud Sync Active');
+
+        if (!currentUser) return;
+
+        // Listen to shared public community contacts
+        const contactsRef = collection(db, 'artifacts', appId, 'public', 'data', 'contacts');
+        onSnapshot(
+          contactsRef,
+          (snapshot) => {
+            const loaded = [];
+            snapshot.forEach((docSnap) => {
+              const data = docSnap.data();
+              loaded.push({
+                id: docSnap.id,
+                name: data.name || 'Unnamed Contact',
+                city: data.city || 'Kolar',
+                categories: Array.isArray(data.categories) && data.categories.length > 0 ? data.categories : ['Plumbers'],
+                phone: data.phone || '',
+                altPhone: data.altPhone || '',
+                address: data.address || '',
+                hours: data.hours || 'Call to confirm availability',
+                desc: data.desc || '',
+                createdBy: data.createdBy || null,
+                createdAt: data.createdAt || 0,
+                isCommunity: true
+              });
+            });
+            loaded.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            communityListings = loaded;
+            setSyncStatus('live', 'Live Cloud Sync Active');
+            renderListings();
+          },
+          (error) => {
+            console.error('Contacts snapshot error:', error);
+            setSyncStatus('error', 'Sync Interrupted');
+            showToast('Unable to sync shared contacts', 'error');
+          }
+        );
+
+        // Listen to shared overrides & soft-deletes for base verified listings
+        const overridesRef = collection(db, 'artifacts', appId, 'public', 'data', 'base_overrides');
+        onSnapshot(
+          overridesRef,
+          (snapshot) => {
+            const nextOverrides = {};
+            snapshot.forEach((docSnap) => {
+              nextOverrides[docSnap.id] = docSnap.data();
+            });
+            baseOverrides = nextOverrides;
+            renderListings();
+            if (!trashModal.classList.contains('hidden')) {
+              renderTrashList();
+            }
+          },
+          (error) => {
+            console.error('Base overrides snapshot error:', error);
+          }
+        );
+
+        // Listen to private user favorites synced in Firestore: artifacts/${appId}/users/${user.uid}/favorites/saved
+        const favDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favorites', 'saved');
+        onSnapshot(
+          favDocRef,
+          (docSnap) => {
+            if (docSnap.exists()) {
+              const ids = docSnap.data().ids;
+              favorites = new Set(Array.isArray(ids) ? ids : []);
+              renderListings();
+            }
+          },
+          (error) => {
+            console.error('Favorites snapshot error:', error);
+          }
+        );
+      } catch (err) {
+        console.error('Firebase init failed, running in offline mode:', err);
+        setSyncStatus('offline', 'Offline Mode');
+      }
+    }
+
+    async function persistFavorites() {
+      if (!db || !currentUser) return;
+      try {
+        const favDocRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'favorites', 'saved');
+        await setDoc(favDocRef, { ids: Array.from(favorites), updatedAt: Date.now() }, { merge: true });
+      } catch (err) {
+        console.error('Failed to save favorites:', err);
+      }
+    }
+
+    // =========================================================================
+    // 4. UTILITY HELPERS
+    // =========================================================================
+    function getAllListings() {
+      const mergedDefaults = DEFAULT_LISTINGS.reduce((acc, base) => {
+        const override = baseOverrides[base.id];
+        if (override && override.deleted) {
+          return acc;
+        }
+        if (override) {
+          acc.push({
+            ...base,
+            name: override.name || base.name,
+            city: override.city || base.city,
+            categories: Array.isArray(override.categories) && override.categories.length > 0 ? override.categories : base.categories,
+            phone: override.phone || base.phone,
+            altPhone: override.altPhone || '',
+            address: override.address || base.address,
+            hours: override.hours || base.hours,
+            desc: override.desc !== undefined ? override.desc : base.desc,
+            isEdited: true
+          });
+        } else {
+          acc.push({ ...base, altPhone: '' });
+        }
+        return acc;
+      }, []);
+
+      return [...communityListings, ...mergedDefaults];
+    }
+
+    function getDeletedBaseListings() {
+      return DEFAULT_LISTINGS.filter((base) => baseOverrides[base.id] && baseOverrides[base.id].deleted);
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatTelHref(phone) {
+      return 'tel:' + String(phone || '').replace(/[^\d+]/g, '');
+    }
+
+    function formatSmsHref(phone, name) {
+      const cleaned = String(phone || '').replace(/[^\d+]/g, '');
+      const body = encodeURIComponent(`Hello ${name}, I found your contact on the Kolar & Chintamani Service Phonebook and need assistance.`);
+      return `sms:${cleaned}?body=${body}`;
+    }
+
+    // Build WhatsApp deep link for 10-digit Indian mobile numbers (strips leading 0 / +91)
+    function getWhatsAppUrl(phone, name) {
+      let digits = String(phone || '').replace(/\D/g, '');
+      if (digits.startsWith('91') && digits.length === 12) {
+        digits = digits.slice(2);
+      } else if (digits.startsWith('0') && digits.length === 11) {
+        digits = digits.slice(1);
+      }
+      if (!/^[6-9]\d{9}$/.test(digits)) {
+        return null;
+      }
+      const msg = encodeURIComponent(`Hello ${name}, I found your number in the Kolar & Chintamani Service Phonebook. Are you available for service?`);
+      return `https://wa.me/91${digits}?text=${msg}`;
+    }
+
+    function getGoogleMapsUrl(item) {
+      const query = encodeURIComponent(`${item.name}, ${item.address}, ${item.city}, Karnataka`);
+      return `https://www.google.com/maps/search/?api=1&query=${query}`;
+    }
+
+    // Generate and download a valid .vcf vCard file for direct import into phone Contacts
+    function downloadVCard(item) {
+      try {
+        const cleanVcf = (val) => String(val || '').replace(/\r?\n/g, ' ').replace(/;/g, '\\;');
+        const telPrimary = String(item.phone || '').replace(/[^\d+]/g, '');
+        const telAlt = item.altPhone ? String(item.altPhone).replace(/[^\d+]/g, '') : '';
+        const notes = `Category: ${item.categories.join(', ')} | Hours: ${item.hours || 'Call to confirm'}${item.desc ? ' | ' + item.desc : ''}`;
+
+        const lines = [
+          'BEGIN:VCARD',
+          'VERSION:3.0',
+          `FN:${cleanVcf(item.name)}`,
+          `ORG:${cleanVcf(item.categories.join(' / '))}`,
+          `TEL;TYPE=CELL,VOICE:${telPrimary}`,
+          ...(telAlt ? [`TEL;TYPE=WORK,VOICE:${telAlt}`] : []),
+          `ADR;TYPE=WORK:;;${cleanVcf(item.address)};${cleanVcf(item.city)};Karnataka;;India`,
+          `NOTE:${cleanVcf(notes)}`,
+          'END:VCARD'
+        ];
+
+        const blob = new Blob([lines.join('\r\n')], { type: 'text/vcard;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const safeName = item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        link.href = url;
+        link.download = `${safeName || 'contact'}.vcf`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast(`Saved "${item.name}.vcf" for phone contacts`);
+      } catch (err) {
+        showToast('Could not generate vCard file', 'error');
+      }
+    }
+
+    // Share contact via Web Share API on mobile, or copy formatted text as fallback
+    async function shareContact(item) {
+      const shareText = [
+        `${item.name} (${item.categories.join(', ')})`,
+        `Phone: ${item.phone}${item.altPhone ? ' / ' + item.altPhone : ''}`,
+        `City: ${item.city}`,
+        `Address: ${item.address}`,
+        `Hours: ${item.hours || 'Call to confirm availability'}`
+      ].join('\n');
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `${item.name} - Kolar & Chintamani Phonebook`,
+            text: shareText
+          });
+          showToast('Contact shared successfully');
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+      copyTextToClipboard(shareText, 'Contact details copied to share');
+    }
+
+    function getCityBadgeClasses(city) {
+      return city === 'Kolar'
+        ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+        : 'bg-teal-50 text-teal-700 border-teal-200';
+    }
+
+    function getCategoryBadgeClasses(category) {
+      switch (category) {
+        case 'Plumbers':
+          return 'bg-sky-50 text-sky-700 border-sky-200';
+        case 'Electricians':
+          return 'bg-amber-50 text-amber-700 border-amber-200';
+        case 'Painters':
+          return 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200';
+        case 'Carpenters':
+          return 'bg-orange-50 text-orange-700 border-orange-200';
+        case 'AC & Appliance Repair':
+          return 'bg-cyan-50 text-cyan-700 border-cyan-200';
+        case 'Welding & Fabrication':
+          return 'bg-slate-100 text-slate-700 border-slate-300';
+        default:
+          return 'bg-slate-50 text-slate-700 border-slate-200';
+      }
+    }
+
+    // Copy to clipboard using execCommand for reliable iframe compatibility
+    function copyTextToClipboard(text, customMessage) {
+      try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.left = '-9999px';
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const success = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        if (success) {
+          showToast(customMessage || `Copied ${text} to clipboard`, 'success');
+        } else {
+          showToast('Could not copy to clipboard', 'error');
+        }
+      } catch (err) {
+        showToast('Could not copy to clipboard', 'error');
+      }
+    }
+
+    // Crisp auto-dismissing toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      const bgClass = type === 'error' ? 'bg-rose-600' : 'bg-slate-900';
+      toast.className = `pointer-events-auto ${bgClass} text-white text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg border border-white/10 transition-all duration-300 translate-y-2 opacity-0`;
+      toast.textContent = message;
+      toastContainer.appendChild(toast);
+
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-2', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 2800);
+    }
+
+    // =========================================================================
+    // 5. FILTERING & RENDERING
+    // =========================================================================
+    function getFilteredListings() {
+      const query = filterState.search.trim().toLowerCase();
+      return getAllListings().filter((item) => {
+        if (filterState.city !== 'All' && item.city !== filterState.city) {
+          return false;
+        }
+        if (filterState.category !== 'All' && !item.categories.includes(filterState.category)) {
+          return false;
+        }
+        if (filterState.onlyFavorites && !favorites.has(item.id)) {
+          return false;
+        }
+        if (query) {
+          const haystack = [
+            item.name,
+            item.city,
+            item.categories.join(' '),
+            item.address,
+            item.phone,
+            item.altPhone || '',
+            item.desc
+          ].join(' ').toLowerCase();
+          if (!haystack.includes(query)) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function updateStats() {
+      const all = getAllListings();
+      const kolarCount = all.filter((i) => i.city === 'Kolar').length;
+      const chintamaniCount = all.filter((i) => i.city === 'Chintamani').length;
+      const deletedCount = getDeletedBaseListings().length;
+
+      statTotal.textContent = all.length;
+      statKolar.textContent = kolarCount;
+      statChintamani.textContent = chintamaniCount;
+      favCountBadge.textContent = favorites.size;
+
+      trashCountBadge.textContent = deletedCount;
+      openTrashModalBtn.classList.toggle('hidden', deletedCount === 0);
+    }
+
+    function updateFilterButtonStyles() {
+      cityButtons.forEach((btn) => {
+        const active = btn.getAttribute('data-city') === filterState.city;
+        btn.className = `city-btn px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+          active
+            ? 'bg-white text-indigo-700 shadow-sm'
+            : 'text-slate-600 hover:text-slate-900'
+        }`;
+      });
+
+      categoryPills.forEach((pill) => {
+        const active = pill.getAttribute('data-category') === filterState.category;
+        pill.className = `cat-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+          active
+            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+        }`;
+      });
+
+      favToggleBtn.className = `inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold transition-all cursor-pointer ${
+        filterState.onlyFavorites
+          ? 'bg-rose-50 text-rose-700 border-rose-200 shadow-sm'
+          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+      }`;
+
+      const hasActiveFilter =
+        filterState.search.trim() !== '' ||
+        filterState.city !== 'All' ||
+        filterState.category !== 'All' ||
+        filterState.onlyFavorites;
+      resetFiltersBtn.classList.toggle('hidden', !hasActiveFilter);
+    }
+
+    function renderListings() {
+      updateStats();
+      updateFilterButtonStyles();
+
+      const filtered = getFilteredListings();
+      resultsSummary.textContent = `Showing ${filtered.length} contact${filtered.length === 1 ? '' : 's'}`;
+
+      if (filtered.length === 0) {
+        listingsGrid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      listingsGrid.innerHTML = filtered.map((item) => {
+        const isFav = favorites.has(item.id);
+        const waUrl = getWhatsAppUrl(item.phone, item.name);
+        const mapsUrl = getGoogleMapsUrl(item);
+
+        const categoryBadgesHtml = item.categories
+          .map(
+            (cat) =>
+              `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getCategoryBadgeClasses(cat)}">${escapeHtml(cat)}</span>`
+          )
+          .join('');
+
+        const statusBadgeHtml = item.isCommunity
+          ? `<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200">
+               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Community
+             </span>`
+          : item.isEdited
+          ? `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border bg-amber-50 text-amber-700 border-amber-200">
+               Edited
+             </span>`
+          : '';
+
+        const altPhoneRowHtml = item.altPhone
+          ? `
+            <div class="flex items-center justify-between gap-2 mb-3 px-3 py-1.5 rounded-xl bg-slate-50/70 border border-slate-200/70">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400 shrink-0">Alt</span>
+                <a href="${escapeHtml(formatTelHref(item.altPhone))}" class="text-xs sm:text-sm font-semibold text-slate-700 hover:text-emerald-700 truncate">${escapeHtml(item.altPhone)}</a>
+              </div>
+              <button
+                type="button"
+                data-copy-phone="${escapeHtml(item.altPhone)}"
+                class="copy-btn inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-[11px] font-semibold text-slate-500 hover:text-indigo-700 hover:bg-indigo-50 border border-slate-200 bg-white transition-colors shrink-0 cursor-pointer"
+                title="Copy alternate number"
+              >
+                <span>Copy</span>
+              </button>
+            </div>
+          `
+          : '';
+
+        const primaryActionsHtml = waUrl
+          ? `
+            <div class="grid grid-cols-2 gap-2">
+              <a
+                href="${escapeHtml(formatTelHref(item.phone))}"
+                class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold shadow-sm shadow-emerald-600/20 transition-all"
+              >
+                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                </svg>
+                <span>Call Now</span>
+              </a>
+              <a
+                href="${escapeHtml(waUrl)}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 active:scale-[0.98] text-white text-xs sm:text-sm font-semibold shadow-sm shadow-green-600/20 transition-all"
+              >
+                <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M20.52 3.48A11.86 11.86 0 0 0 12.06 0C5.47 0 .11 5.36.11 11.95c0 2.1.55 4.15 1.59 5.96L0 24l6.26-1.64a11.93 11.93 0 0 0 5.8 1.48h.01c6.59 0 11.95-5.36 11.95-11.95 0-3.19-1.24-6.19-3.5-8.41zm-8.46 18.35h-.01a9.92 9.92 0 0 1-5.06-1.39l-.36-.22-3.71.97.99-3.62-.24-.37a9.91 9.91 0 0 1-1.52-5.25c0-5.47 4.45-9.92 9.93-9.92 2.65 0 5.14 1.03 7.01 2.91a9.86 9.86 0 0 1 2.9 7.02c0 5.47-4.45 9.87-9.93 9.87zm5.45-7.43c-.3-.15-1.76-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.07 2.88 1.22 3.08.15.2 2.1 3.21 5.09 4.5.71.31 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
+                </svg>
+                <span>WhatsApp</span>
+              </a>
+            </div>
+          `
+          : `
+            <a
+              href="${escapeHtml(formatTelHref(item.phone))}"
+              class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white text-sm font-semibold shadow-sm shadow-emerald-600/20 transition-all"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+              </svg>
+              <span>Call Now</span>
+            </a>
+          `;
+
+        return `
+          <article class="bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-200 flex flex-col justify-between p-5">
+            <div>
+              <!-- Badges & Card Management Actions Row -->
+              <div class="flex items-start justify-between gap-2 mb-3">
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border ${getCityBadgeClasses(item.city)}">
+                    ${escapeHtml(item.city)}
+                  </span>
+                  ${categoryBadgesHtml}
+                  ${statusBadgeHtml}
+                </div>
+                <div class="flex items-center gap-0.5 shrink-0 -mt-1 -mr-1">
+                  <button
+                    type="button"
+                    data-edit-id="${escapeHtml(item.id)}"
+                    aria-label="Edit contact"
+                    title="Edit contact"
+                    class="edit-btn p-2 rounded-xl text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors cursor-pointer"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    data-delete-id="${escapeHtml(item.id)}"
+                    aria-label="Delete contact"
+                    title="Delete contact"
+                    class="delete-btn p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    data-fav-id="${escapeHtml(item.id)}"
+                    aria-label="${isFav ? 'Remove from favorites' : 'Save to favorites'}"
+                    title="${isFav ? 'Remove from saved' : 'Save contact'}"
+                    class="fav-btn p-2 rounded-xl transition-colors cursor-pointer ${
+                      isFav
+                        ? 'text-rose-500 bg-rose-50 hover:bg-rose-100'
+                        : 'text-slate-400 hover:text-rose-500 hover:bg-slate-100'
+                    }"
+                  >
+                    <svg class="w-4 h-4" fill="${isFav ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Business Name & Description -->
+              <h3 class="text-base font-bold text-slate-900 leading-snug">${escapeHtml(item.name)}</h3>
+              <p class="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">${escapeHtml(item.desc)}</p>
+
+              <!-- Address & Hours -->
+              <div class="mt-3.5 space-y-2 text-xs text-slate-500">
+                <div class="flex items-start gap-2">
+                  <svg class="w-4 h-4 text-slate-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>${escapeHtml(item.address)}</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <svg class="w-4 h-4 text-slate-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2" />
+                  </svg>
+                  <span>${escapeHtml(item.hours)}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Phone & Action Controls -->
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <div class="flex items-center justify-between gap-2 mb-2.5 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80">
+                <div class="flex items-center gap-2 min-w-0">
+                  <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
+                  </svg>
+                  <span class="text-sm font-bold text-slate-900 tracking-wide truncate">${escapeHtml(item.phone)}</span>
+                </div>
+                <button
+                  type="button"
+                  data-copy-phone="${escapeHtml(item.phone)}"
+                  class="copy-btn inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-600 hover:text-indigo-700 hover:bg-indigo-50 border border-slate-200 bg-white transition-colors shrink-0 cursor-pointer"
+                  title="Copy phone number"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                  </svg>
+                  <span>Copy</span>
+                </button>
+              </div>
+
+              ${altPhoneRowHtml}
+              ${primaryActionsHtml}
+
+              <!-- Secondary Phone Utility Bar: SMS, Save vCard, Share, Google Maps -->
+              <div class="mt-2.5 grid grid-cols-4 gap-1.5">
+                <a
+                  href="${escapeHtml(formatSmsHref(item.phone, item.name))}"
+                  class="inline-flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200/80 text-[11px] font-semibold transition-colors"
+                  title="Send SMS"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span>SMS</span>
+                </a>
+                <button
+                  type="button"
+                  data-vcard-id="${escapeHtml(item.id)}"
+                  class="vcard-btn inline-flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200/80 text-[11px] font-semibold transition-colors cursor-pointer"
+                  title="Save to phone contacts (.vcf)"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="8.5" cy="7" r="4" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20 8v6M23 11h-6" />
+                  </svg>
+                  <span>Save .vcf</span>
+                </button>
+                <button
+                  type="button"
+                  data-share-id="${escapeHtml(item.id)}"
+                  class="share-btn inline-flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200/80 text-[11px] font-semibold transition-colors cursor-pointer"
+                  title="Share contact details"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.59 13.51 6.83 3.98M15.41 6.51l-6.82 3.98" />
+                  </svg>
+                  <span>Share</span>
+                </button>
+                <a
+                  href="${escapeHtml(mapsUrl)}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl bg-slate-50 hover:bg-indigo-50 text-slate-600 hover:text-indigo-700 border border-slate-200/80 text-[11px] font-semibold transition-colors"
+                  title="Open in Google Maps"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span>Maps</span>
+                </a>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. EVENT LISTENERS (SEARCH, FILTERS, CARD ACTIONS)
+    // =========================================================================
+    searchInput.addEventListener('input', (e) => {
+      filterState.search = e.target.value;
+      renderListings();
+    });
+
+    cityButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        filterState.city = btn.getAttribute('data-city');
+        renderListings();
+      });
+    });
+
+    categoryPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        filterState.category = pill.getAttribute('data-category');
+        renderListings();
+      });
+    });
+
+    favToggleBtn.addEventListener('click', () => {
+      filterState.onlyFavorites = !filterState.onlyFavorites;
+      renderListings();
+    });
+
+    function resetAllFilters() {
+      filterState.search = '';
+      filterState.city = 'All';
+      filterState.category = 'All';
+      filterState.onlyFavorites = false;
+      searchInput.value = '';
+      renderListings();
+    }
+
+    resetFiltersBtn.addEventListener('click', resetAllFilters);
+    emptyResetBtn.addEventListener('click', resetAllFilters);
+    emptyAddBtn.addEventListener('click', openAddModal);
+
+    // Delegated clicks inside listings grid
+    listingsGrid.addEventListener('click', (e) => {
+      const copyBtn = e.target.closest('.copy-btn');
+      if (copyBtn) {
+        const phone = copyBtn.getAttribute('data-copy-phone');
+        if (phone) copyTextToClipboard(phone);
+        return;
+      }
+
+      const editBtn = e.target.closest('.edit-btn');
+      if (editBtn) {
+        const id = editBtn.getAttribute('data-edit-id');
+        const contact = getAllListings().find((item) => item.id === id);
+        if (contact) openEditModal(contact);
+        return;
+      }
+
+      const deleteBtn = e.target.closest('.delete-btn');
+      if (deleteBtn) {
+        const id = deleteBtn.getAttribute('data-delete-id');
+        const contact = getAllListings().find((item) => item.id === id);
+        if (contact) openDeleteModal(contact);
+        return;
+      }
+
+      const vcardBtn = e.target.closest('.vcard-btn');
+      if (vcardBtn) {
+        const id = vcardBtn.getAttribute('data-vcard-id');
+        const contact = getAllListings().find((item) => item.id === id);
+        if (contact) downloadVCard(contact);
+        return;
+      }
+
+      const shareBtn = e.target.closest('.share-btn');
+      if (shareBtn) {
+        const id = shareBtn.getAttribute('data-share-id');
+        const contact = getAllListings().find((item) => item.id === id);
+        if (contact) shareContact(contact);
+        return;
+      }
+
+      const favBtn = e.target.closest('.fav-btn');
+      if (favBtn) {
+        const id = favBtn.getAttribute('data-fav-id');
+        if (favorites.has(id)) {
+          favorites.delete(id);
+          showToast('Removed from saved contacts');
+        } else {
+          favorites.add(id);
+          showToast('Saved to favorites');
+        }
+        persistFavorites();
+        renderListings();
+      }
+    });
+
+    // =========================================================================
+    // 7. ADD / EDIT, DELETE & RESTORE MODALS
+    // =========================================================================
+    function openAddModal() {
+      editingContact = null;
+      addContactForm.reset();
+      modalTitle.textContent = 'Add New Local Contact';
+      modalSubtitle.textContent = 'Add a trusted technician or shop to the shared phonebook';
+      submitContactBtn.textContent = 'Save Contact';
+      addContactModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      document.getElementById('inputName').focus();
+    }
+
+    function openEditModal(contact) {
+      editingContact = contact;
+      addContactForm.reset();
+      modalTitle.textContent = 'Edit Contact';
+      modalSubtitle.textContent = 'Update details — changes sync globally for all users';
+      submitContactBtn.textContent = 'Update Contact';
+
+      document.getElementById('inputName').value = contact.name || '';
+      document.getElementById('inputCity').value = contact.city || 'Kolar';
+      document.getElementById('inputPhone').value = contact.phone || '';
+      document.getElementById('inputAltPhone').value = contact.altPhone || '';
+      document.getElementById('inputAddress').value = contact.address || '';
+      document.getElementById('inputHours').value = contact.hours || '';
+      document.getElementById('inputDesc').value = contact.desc || '';
+
+      document.querySelectorAll('#categoryCheckboxes input[type="checkbox"]').forEach((cb) => {
+        cb.checked = Array.isArray(contact.categories) && contact.categories.includes(cb.value);
+      });
+
+      addContactModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+      document.getElementById('inputName').focus();
+    }
+
+    function closeModal() {
+      editingContact = null;
+      addContactModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      addContactForm.reset();
+    }
+
+    function openDeleteModal(contact) {
+      pendingDeleteContact = contact;
+      const isBase = DEFAULT_ID_SET.has(contact.id);
+      deleteModalMessage.textContent = isBase
+        ? `Remove "${contact.name}" from the directory? You can restore default contacts anytime from the Restore button.`
+        : `Are you sure you want to permanently remove "${contact.name}" from the shared directory?`;
+      deleteConfirmModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeDeleteModal() {
+      pendingDeleteContact = null;
+      deleteConfirmModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    function renderTrashList() {
+      const deleted = getDeletedBaseListings();
+      if (deleted.length === 0) {
+        trashListContainer.innerHTML = `<p class="text-sm text-slate-500 text-center py-6">No deleted default contacts.</p>`;
+        restoreAllDefaultsBtn.disabled = true;
+        restoreAllDefaultsBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        return;
+      }
+
+      restoreAllDefaultsBtn.disabled = false;
+      restoreAllDefaultsBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      trashListContainer.innerHTML = deleted
+        .map(
+          (item) => `
+          <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="min-w-0">
+              <p class="text-sm font-bold text-slate-900 truncate">${escapeHtml(item.name)}</p>
+              <p class="text-xs text-slate-500 truncate">${escapeHtml(item.city)} · ${escapeHtml(item.phone)}</p>
+            </div>
+            <button
+              type="button"
+              data-restore-id="${escapeHtml(item.id)}"
+              class="restore-single-btn shrink-0 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Restore
+            </button>
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    function openTrashModal() {
+      renderTrashList();
+      trashModal.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeTrashModal() {
+      trashModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    openAddModalBtn.addEventListener('click', openAddModal);
+    closeModalBtn.addEventListener('click', closeModal);
+    cancelModalBtn.addEventListener('click', closeModal);
+
+    openTrashModalBtn.addEventListener('click', openTrashModal);
+    closeTrashModalBtn.addEventListener('click', closeTrashModal);
+    closeTrashFooterBtn.addEventListener('click', closeTrashModal);
+
+    trashListContainer.addEventListener('click', async (e) => {
+      const restoreBtn = e.target.closest('.restore-single-btn');
+      if (!restoreBtn) return;
+      const id = restoreBtn.getAttribute('data-restore-id');
+      if (!id) return;
+
+      if (db && currentUser) {
+        try {
+          await setDoc(
+            doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', id),
+            { deleted: false, restoredAt: Date.now() },
+            { merge: true }
+          );
+          showToast('Contact restored to directory');
+        } catch (err) {
+          console.error('Restore failed:', err);
+          showToast('Could not restore contact', 'error');
+        }
+      } else {
+        if (baseOverrides[id]) {
+          baseOverrides[id].deleted = false;
+        }
+        renderListings();
+        renderTrashList();
+        showToast('Contact restored');
+      }
+    });
+
+    restoreAllDefaultsBtn.addEventListener('click', async () => {
+      const deleted = getDeletedBaseListings();
+      if (deleted.length === 0) return;
+
+      if (db && currentUser) {
+        restoreAllDefaultsBtn.disabled = true;
+        restoreAllDefaultsBtn.textContent = 'Restoring...';
+        try {
+          await Promise.all(
+            deleted.map((item) =>
+              setDoc(
+                doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', item.id),
+                { deleted: false, restoredAt: Date.now() },
+                { merge: true }
+              )
+            )
+          );
+          closeTrashModal();
+          showToast(`Restored ${deleted.length} default contact${deleted.length === 1 ? '' : 's'}`);
+        } catch (err) {
+          console.error('Restore all failed:', err);
+          showToast('Could not restore contacts', 'error');
+        } finally {
+          restoreAllDefaultsBtn.disabled = false;
+          restoreAllDefaultsBtn.textContent = 'Restore All Defaults';
+        }
+      } else {
+        deleted.forEach((item) => {
+          if (baseOverrides[item.id]) baseOverrides[item.id].deleted = false;
+        });
+        closeTrashModal();
+        renderListings();
+        showToast(`Restored ${deleted.length} default contact${deleted.length === 1 ? '' : 's'}`);
+      }
+    });
+
+    cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+    confirmDeleteBtn.addEventListener('click', async () => {
+      if (!pendingDeleteContact) return;
+      const target = pendingDeleteContact;
+      const isBase = DEFAULT_ID_SET.has(target.id);
+
+      confirmDeleteBtn.disabled = true;
+      confirmDeleteBtn.textContent = 'Deleting...';
+
+      try {
+        if (db && currentUser) {
+          if (isBase) {
+            await setDoc(
+              doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', target.id),
+              { deleted: true, deletedAt: Date.now(), deletedBy: currentUser.uid },
+              { merge: true }
+            );
+          } else {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'contacts', target.id));
+          }
+        } else {
+          if (isBase) {
+            baseOverrides[target.id] = { ...(baseOverrides[target.id] || {}), deleted: true };
+          } else {
+            communityListings = communityListings.filter((c) => c.id !== target.id);
+          }
+          renderListings();
+        }
+        closeDeleteModal();
+        showToast(`Deleted "${target.name}"`);
+      } catch (err) {
+        console.error('Delete failed:', err);
+        showToast('Could not delete contact', 'error');
+      } finally {
+        confirmDeleteBtn.disabled = false;
+        confirmDeleteBtn.textContent = 'Delete';
+      }
+    });
+
+    addContactModal.addEventListener('click', (e) => {
+      if (e.target === addContactModal) closeModal();
+    });
+    deleteConfirmModal.addEventListener('click', (e) => {
+      if (e.target === deleteConfirmModal) closeDeleteModal();
+    });
+    trashModal.addEventListener('click', (e) => {
+      if (e.target === trashModal) closeTrashModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!addContactModal.classList.contains('hidden')) closeModal();
+        if (!deleteConfirmModal.classList.contains('hidden')) closeDeleteModal();
+        if (!trashModal.classList.contains('hidden')) closeTrashModal();
+      }
+    });
+
+    addContactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('inputName').value.trim();
+      const city = document.getElementById('inputCity').value;
+      const selectedCategories = Array.from(
+        document.querySelectorAll('#categoryCheckboxes input[type="checkbox"]:checked')
+      ).map((cb) => cb.value);
+      const phoneRaw = document.getElementById('inputPhone').value.trim();
+      const altPhoneRaw = document.getElementById('inputAltPhone').value.trim();
+      const hoursRaw = document.getElementById('inputHours').value.trim();
+      const address = document.getElementById('inputAddress').value.trim();
+      const desc = document.getElementById('inputDesc').value.trim();
+
+      if (!name || !address || !phoneRaw || !/\d/.test(phoneRaw)) {
+        showToast('Please provide a valid name, callable phone number, and address', 'error');
+        return;
+      }
+
+      if (selectedCategories.length === 0) {
+        showToast('Please select at least one service category', 'error');
+        return;
+      }
+
+      const contactPayload = {
+        name,
+        city,
+        categories: selectedCategories,
+        phone: phoneRaw,
+        altPhone: altPhoneRaw,
+        address,
+        hours: hoursRaw || 'Call to confirm availability',
+        desc: desc || `${selectedCategories.join(' & ')} service in ${city}.`
+      };
+
+      const isEditMode = Boolean(editingContact);
+      const originalTarget = editingContact;
+      const isBaseEdit = isEditMode && DEFAULT_ID_SET.has(originalTarget.id);
+
+      if (db && currentUser) {
+        submitContactBtn.disabled = true;
+        submitContactBtn.textContent = isEditMode ? 'Updating...' : 'Saving...';
+        try {
+          if (isEditMode) {
+            if (isBaseEdit) {
+              await setDoc(
+                doc(db, 'artifacts', appId, 'public', 'data', 'base_overrides', originalTarget.id),
+                { ...contactPayload, deleted: false, updatedAt: Date.now(), updatedBy: currentUser.uid },
+                { merge: true }
+              );
+            } else {
+              await setDoc(
+                doc(db, 'artifacts', appId, 'public', 'data', 'contacts', originalTarget.id),
+                { ...contactPayload, updatedAt: Date.now(), updatedBy: currentUser.uid },
+                { merge: true }
+              );
+            }
+            closeModal();
+            showToast(`Updated "${name}" — synced globally!`);
+          } else {
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'contacts'), {
+              ...contactPayload,
+              createdAt: Date.now(),
+              createdBy: currentUser.uid
+            });
+            closeModal();
+            showToast(`Added "${name}" — now live for all users!`);
+          }
+        } catch (err) {
+          console.error('Error saving contact to Firestore:', err);
+          showToast('Failed to save contact to cloud. Please try again.', 'error');
+        } finally {
+          submitContactBtn.disabled = false;
+          submitContactBtn.textContent = isEditMode ? 'Update Contact' : 'Save Contact';
+        }
+      } else {
+        // Graceful in-memory fallback when running offline without Firebase config
+        if (isEditMode) {
+          if (isBaseEdit) {
+            baseOverrides[originalTarget.id] = { ...contactPayload, deleted: false };
+          } else {
+            communityListings = communityListings.map((c) =>
+              c.id === originalTarget.id ? { ...c, ...contactPayload } : c
+            );
+          }
+          closeModal();
+          renderListings();
+          showToast(`Updated "${name}" (session only — cloud offline)`);
+        } else {
+          communityListings.unshift({
+            id: 'local-' + Date.now(),
+            ...contactPayload,
+            createdAt: Date.now(),
+            isCommunity: true
+          });
+          closeModal();
+          renderListings();
+          showToast(`Added "${name}" (session only — cloud offline)`);
+        }
+      }
+    });
+
+    // =========================================================================
+    // 8. EXPORT TO CSV LOGIC
+    // =========================================================================
+    exportCsvBtn.addEventListener('click', () => {
+      try {
+        const rows = getFilteredListings();
+        const exportData = rows.length > 0 ? rows : getAllListings();
+
+        const csvEscape = (val) => {
+          const str = String(val || '').replace(/"/g, '""');
+          return `"${str}"`;
+        };
+
+        const headers = ['Business Name', 'City', 'Category', 'Primary Phone', 'Alternate Phone', 'Address', 'Operating Hours', 'Description'];
+        const csvLines = [
+          headers.map(csvEscape).join(','),
+          ...exportData.map((item) =>
+            [
+              item.name,
+              item.city,
+              item.categories.join(' / '),
+              item.phone,
+              item.altPhone || '',
+              item.address,
+              item.hours,
+              item.desc
+            ]
+              .map(csvEscape)
+              .join(',')
+          )
+        ];
+
+        const blob = new Blob([csvLines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'kolar-chintamani-service-phonebook.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        showToast(`Exported ${exportData.length} contacts to CSV`);
+      } catch (err) {
+        showToast('Could not export CSV file', 'error');
+      }
+    });
+
+    // =========================================================================
+    // 9. INITIAL RENDER & BOOTSTRAP
+    // =========================================================================
+    renderListings();
+    initCloudSync();
+  </script>
+</body>
+</html>
